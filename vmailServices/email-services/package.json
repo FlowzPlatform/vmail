@@ -1,0 +1,35 @@
+{
+  "name": "email-services",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "micro",
+    "lint": "xo",
+    "test": "npm run lint && ava"
+  },
+  "xo": {
+    "extends": "prettier"
+  },
+  "engines": {
+    "node": "^7.7.3"
+  },
+  "dependencies": {
+    "config": "^1.26.1",
+    "micro": "^7.3.3",
+    "micro-cors": "0.0.4",
+    "micro-jwt-auth": "^1.9.0",
+    "microrouter": "^2.2.0",
+    "promise": "^8.0.1",
+    "request": "^2.81.0",
+    "rethinkdb": "^2.3.3"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "eslint-config-prettier": "^1.7.0",
+    "prettier": "^1.5.3",
+    "request-promise": "^4.2.1",
+    "test-listen": "^1.0.2",
+    "xo": "^0.18.1"
+  }
+}

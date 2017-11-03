@@ -1,0 +1,113 @@
+2017-06-28T19:27:24.531726969 10.054214s notice: Recursively removing directory /home/software/my/virtualemailservices/email-services/rethinkdb_data/tmp
+2017-06-28T19:27:24.543714200 10.066199s notice: Initializing directory /home/software/my/virtualemailservices/email-services/rethinkdb_data
+2017-06-28T19:27:24.543781010 10.066266s info: Creating a default database for your convenience. (This is because you ran 'rethinkdb' without 'create', 'serve', or '--join', and the directory '/home/software/my/virtualemailservices/email-services/rethinkdb_data' did not already exist or is empty.)
+2017-06-28T19:27:24.543797460 10.066282s notice: Running rethinkdb 2.3.5~0xenial (GCC 5.3.1)...
+2017-06-28T19:27:24.545562559 10.068049s notice: Running on Linux 4.4.0-81-generic x86_64
+2017-06-28T19:27:24.545615973 10.068101s notice: Loading data from directory /home/software/my/virtualemailservices/email-services/rethinkdb_data
+2017-06-28T19:27:24.644539053 10.167025s info: Automatically using cache size of 5995 MB
+2017-06-28T19:27:24.645614995 10.168100s notice: Listening for intracluster connections on port 29015
+2017-06-28T19:27:24.647788401 10.170274s notice: Listening for client driver connections on port 28015
+2017-06-28T19:27:24.648117661 10.170603s notice: Listening for administrative HTTP connections on port 8080
+2017-06-28T19:27:24.648123782 10.170609s notice: Listening on cluster addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T19:27:24.648132108 10.170617s notice: Listening on driver addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T19:27:24.648137436 10.170622s notice: Listening on http addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T19:27:24.648144788 10.170630s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-06-28T19:27:24.648154177 10.170639s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-06-28T20:41:23.165419089 10.049471s notice: Running rethinkdb 2.3.5~0xenial (GCC 5.3.1)...
+2017-06-28T20:41:23.170569461 10.054626s notice: Running on Linux 4.4.0-81-generic x86_64
+2017-06-28T20:41:23.170675505 10.054727s notice: Loading data from directory /home/software/my/virtualemailservices/email-services/rethinkdb_data
+2017-06-28T20:41:23.208350396 10.092402s info: Automatically using cache size of 5798 MB
+2017-06-28T20:41:23.209238840 10.093291s notice: Listening for intracluster connections on port 29015
+2017-06-28T20:41:23.211045879 10.095097s notice: Listening for client driver connections on port 28015
+2017-06-28T20:41:23.211294967 10.095346s notice: Listening for administrative HTTP connections on port 8080
+2017-06-28T20:41:23.211301195 10.095352s notice: Listening on cluster addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T20:41:23.211307934 10.095359s notice: Listening on driver addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T20:41:23.211312328 10.095364s notice: Listening on http addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-28T20:41:23.211318290 10.095370s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-06-28T20:41:23.211324878 10.095376s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-06-28T20:41:44.171658284 31.055710s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Starting a new Raft election for term 1.
+2017-06-28T20:41:44.172522932 31.056575s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Added replica on this server.
+2017-06-28T20:41:44.188896398 31.072949s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: This server is Raft leader for term 1. Latest log index is 0.
+2017-06-28T22:20:17.057814585 5943.941867s notice: Server got SIGINT from pid 0, uid 0; shutting down...
+2017-06-28T22:20:17.057980819 5943.942033s notice: Shutting down client connections...
+2017-06-28T22:20:17.058247514 5943.942299s notice: All client connections closed.
+2017-06-28T22:20:17.058262535 5943.942314s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2017-06-28T22:20:17.065524092 5943.949577s notice: Storage engine shut down.
+2017-06-30T17:59:12.084350519 0.170640s notice: Running rethinkdb 2.3.5~0xenial (GCC 5.3.1)...
+2017-06-30T17:59:12.097124867 0.183419s notice: Running on Linux 4.4.0-81-generic x86_64
+2017-06-30T17:59:12.097258233 0.183548s notice: Loading data from directory /home/software/my/virtualemailservices/email-services/rethinkdb_data
+2017-06-30T17:59:12.171385714 0.257677s info: Automatically using cache size of 5907 MB
+2017-06-30T17:59:12.175495733 0.261785s notice: Listening for intracluster connections on port 29015
+2017-06-30T17:59:12.244659512 0.330949s notice: Listening for client driver connections on port 28015
+2017-06-30T17:59:12.244895591 0.331185s notice: Listening for administrative HTTP connections on port 8080
+2017-06-30T17:59:12.244900154 0.331189s notice: Listening on cluster addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-30T17:59:12.244970572 0.331259s notice: Listening on driver addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-30T17:59:12.244974376 0.331263s notice: Listening on http addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-06-30T17:59:12.244977469 0.331266s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-06-30T17:59:12.244991439 0.331280s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-06-30T17:59:14.017529389 2.103819s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Starting a new Raft election for term 2.
+2017-06-30T17:59:14.031376692 2.117666s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: This server is Raft leader for term 2. Latest log index is 3.
+2017-06-30T17:59:15.886369902 3.972660s notice: Server got SIGINT from pid 0, uid 0; shutting down...
+2017-06-30T17:59:15.886565943 3.972856s notice: Shutting down client connections...
+2017-06-30T17:59:15.886797564 3.973087s notice: All client connections closed.
+2017-06-30T17:59:15.886806411 3.973095s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2017-06-30T17:59:15.906503834 3.992794s notice: Storage engine shut down.
+2017-08-31T16:28:39.879957281 0.132821s notice: Running rethinkdb 2.3.6~0xenial (GCC 5.3.1)...
+2017-08-31T16:28:39.885020271 0.137888s notice: Running on Linux 4.4.0-87-generic x86_64
+2017-08-31T16:28:39.885131808 0.137995s notice: Loading data from directory /home/software/house/vmail/service/email-services/rethinkdb_data
+2017-08-31T16:28:39.932700364 0.185564s info: Automatically using cache size of 5134 MB
+2017-08-31T16:28:39.933796016 0.186660s notice: Listening for intracluster connections on port 29015
+2017-08-31T16:28:39.977194155 0.230059s notice: Listening for client driver connections on port 28015
+2017-08-31T16:28:39.998693870 0.251558s error: Could not bind to http port: The address at localhost:8080 is reserved or already in use.
+2017-08-31T16:29:54.544698092 0.151126s notice: Running rethinkdb 2.3.6~0xenial (GCC 5.3.1)...
+2017-08-31T16:29:54.550559304 0.156993s notice: Running on Linux 4.4.0-87-generic x86_64
+2017-08-31T16:29:54.550696352 0.157123s notice: Loading data from directory /home/software/house/vmail/service/email-services/rethinkdb_data
+2017-08-31T16:29:54.594131711 0.200559s info: Automatically using cache size of 5097 MB
+2017-08-31T16:29:54.595284018 0.201711s notice: Listening for intracluster connections on port 29015
+2017-08-31T16:29:54.623143596 0.229571s notice: Listening for client driver connections on port 28015
+2017-08-31T16:29:54.623555044 0.229982s notice: Listening for administrative HTTP connections on port 8080
+2017-08-31T16:29:54.623562877 0.229990s notice: Listening on cluster addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-08-31T16:29:54.623570272 0.229997s notice: Listening on driver addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-08-31T16:29:54.623592803 0.230019s notice: Listening on http addresses: 127.0.0.1, 127.0.1.1, ::1
+2017-08-31T16:29:54.623600071 0.230027s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-08-31T16:29:54.623620240 0.230047s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-08-31T16:29:56.366599875 1.973027s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Starting a new Raft election for term 3.
+2017-08-31T16:29:56.380327148 1.986755s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: This server is Raft leader for term 3. Latest log index is 6.
+2017-09-03T19:59:39.598349660 0.596115s notice: Running rethinkdb 2.3.6~0xenial (GCC 5.3.1)...
+2017-09-03T19:59:39.604942317 0.602714s notice: Running on Linux 4.4.0-87-generic x86_64
+2017-09-03T19:59:39.605096098 0.602861s notice: Loading data from directory /home/software/house/vmail/service/email-services/rethinkdb_data
+2017-09-03T19:59:39.639746511 0.637512s info: Automatically using cache size of 6481 MB
+2017-09-03T19:59:39.641388432 0.639154s notice: Listening for intracluster connections on port 29015
+2017-09-03T19:59:39.672727478 0.670493s notice: Listening for client driver connections on port 28015
+2017-09-03T19:59:39.673127129 0.670893s notice: Listening for administrative HTTP connections on port 8080
+2017-09-03T19:59:39.673135461 0.670900s notice: Listening on cluster addresses: 127.0.0.1, ::1
+2017-09-03T19:59:39.673157716 0.670922s notice: Listening on driver addresses: 127.0.0.1, ::1
+2017-09-03T19:59:39.673164038 0.670929s notice: Listening on http addresses: 127.0.0.1, ::1
+2017-09-03T19:59:39.673168700 0.670933s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-09-03T19:59:39.673189589 0.670954s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-09-03T19:59:41.330447421 2.328214s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Starting a new Raft election for term 4.
+2017-09-03T19:59:41.337598756 2.335364s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: This server is Raft leader for term 4. Latest log index is 9.
+2017-09-03T20:00:46.480094264 67.477860s notice: Server got SIGINT from pid 0, uid 0; shutting down...
+2017-09-03T20:00:46.480333411 67.478099s notice: Shutting down client connections...
+2017-09-03T20:00:46.480453603 67.478219s notice: All client connections closed.
+2017-09-03T20:00:46.480460590 67.478225s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2017-09-03T20:00:46.487109273 67.484875s notice: Storage engine shut down.
+2017-09-03T20:00:49.254681106 0.229703s notice: Running rethinkdb 2.3.6~0xenial (GCC 5.3.1)...
+2017-09-03T20:00:49.262035770 0.237064s notice: Running on Linux 4.4.0-87-generic x86_64
+2017-09-03T20:00:49.262199178 0.237221s notice: Loading data from directory /home/software/house/vmail/service/email-services/rethinkdb_data
+2017-09-03T20:00:49.293166233 0.268188s info: Automatically using cache size of 6510 MB
+2017-09-03T20:00:49.294173760 0.269196s notice: Listening for intracluster connections on port 29015
+2017-09-03T20:00:49.323619287 0.298641s notice: Listening for client driver connections on port 28015
+2017-09-03T20:00:49.323855889 0.298878s notice: Listening for administrative HTTP connections on port 8080
+2017-09-03T20:00:49.323860211 0.298882s notice: Listening on cluster addresses: 127.0.0.1, ::1
+2017-09-03T20:00:49.323863282 0.298885s notice: Listening on driver addresses: 127.0.0.1, ::1
+2017-09-03T20:00:49.323874929 0.298896s notice: Listening on http addresses: 127.0.0.1, ::1
+2017-09-03T20:00:49.323878110 0.298899s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2017-09-03T20:00:49.323881400 0.298903s notice: Server ready, "OBLAP_72_jnv" 86418aa4-6157-47b0-8ef9-8dae691500d8
+2017-09-03T20:00:50.715360714 1.690383s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: Starting a new Raft election for term 5.
+2017-09-03T20:00:50.722222706 1.697245s info: Table d02519ac-d55c-4ccd-95f5-ecbdf1b15e99: This server is Raft leader for term 5. Latest log index is 12.
+2017-09-03T20:08:48.919390130 479.894412s notice: Server got SIGINT from pid 0, uid 0; shutting down...
+2017-09-03T20:08:48.919691728 479.894714s notice: Shutting down client connections...
+2017-09-03T20:08:48.919776977 479.894799s notice: All client connections closed.
+2017-09-03T20:08:48.919781627 479.894803s notice: Shutting down storage engine... (This may take a while if you had a lot of unflushed data in the writeback cache.)
+2017-09-03T20:08:48.922701075 479.897723s notice: Storage engine shut down.

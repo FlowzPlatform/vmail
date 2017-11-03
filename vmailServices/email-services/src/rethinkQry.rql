@@ -1,0 +1,24 @@
+r.db("virtualEMail").table('emails').group(r.row('to')('original'),{multi: true})
+.ungroup()
+.map(
+    function (doc) {
+        return { group: doc('group'),
+          count :	doc('reduction').count(),
+          read: doc('reduction').sum(function(obj){
+            return r.branch(obj.hasFields('read'),1,0)
+          })
+        };
+    }
+)
+
+
+// let emailData = await getEmailData(req.parentId);
+  // req.messageId = emailData.headers['in-reply-to']
+  // emailData.headers['in-reply-to'].concat(emailData.headers['message-id'])
+  // req.references = emailData.headers['in-reply-to']
+
+  
+
+
+
+    

@@ -1,0 +1,7 @@
+{
+  "rhost": "xxx.xx.xx.xx",
+  "rport": "xxxxx", //for example 28015
+  "rdb": "xxxxxxx",
+  "senecaUrl": "http://localhost:4000",
+  "privateKey": "xxxxxxxxxx"
+}

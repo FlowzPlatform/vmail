@@ -1,0 +1,17 @@
+harakamail/node_modules/
+harakamail/queue/
+harakamail/rethinkdb_data/
+
+seneca-web-email/node_modules/
+
+vmailClient/.DS_Store
+vmailClient/node_modules/
+vmailClient/dist/
+vmailClient/npm-debug.log*
+vmailClient/yarn-debug.log*
+vmailClient/yarn-error.log*
+
+vmailServer/node_modules/
+
+vmailServices/node_modules/
+vmailServices/email-services/node_modules/
