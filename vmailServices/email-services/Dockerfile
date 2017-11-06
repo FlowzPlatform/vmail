@@ -1,5 +1,4 @@
 FROM node:alpine
-MAINTAINER flowz <dm@officebrain.com>
 
 #working directoryy
 WORKDIR /opt/app/

@@ -1,0 +1,30 @@
+{
+  "aws": {
+    "accessKeyId": "ABCD-ABCD-ABCD",
+    "secretAccessKey": "ABCD-ABCD-ABCD-ABCD-ABCD-ABCD",
+    "region": "us-west-2",
+    "s3Bucket": "airflowbucket1/pass",
+    "zipBeforeUpload": true,
+    "fileExtension": ".eml.raw.gzip",
+    "copyAllAddresses": true
+  },
+  "elasticsearch": {
+    "esUrl": "https://localhost:9200",
+    "index": "virtualemails",
+    "type": "emails",
+    "log": "trace",
+    "enable": false
+  },
+  "rethinkDb": {
+    "host": "localhost",
+    "port": 28015,
+    "db": "virtualEMail",
+    "table": "emails",
+    "tblEmailIds":"emailIds",
+    "tblEmailSubjects":"emailSubjects",
+    "enable": true
+  },
+  "vmail" : {
+    "removeThreadedDuplicateBodyContent": true
+  }
+}

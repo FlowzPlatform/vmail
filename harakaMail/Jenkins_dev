@@ -1,0 +1,71 @@
+node
+{
+  def app
+
+  stage('Clone repository')
+  {
+    node
+    {
+      try
+      {
+        checkout scm
+        currentBuild.result = 'SUCCESS'
+      }
+      catch(any)
+      {
+         currentBuild.result = 'FAILURE'
+         throw any
+      }
+      finally
+      {
+          step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: '$dev_email_id', sendToIndividuals: true])
+      }
+    }
+   }
+
+  stage('Build image for haraka-mail')
+  {
+    node
+       {
+         try
+         {
+           app = docker.build("$user_id_dev/haraka-mail")
+           currentBuild.result = 'SUCCESS'
+         }
+         catch(any)
+         {
+           currentBuild.result = 'FAILURE'
+           throw any
+         }
+         finally
+         {
+           step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: '$dev_email_id', sendToIndividuals: true])
+         }
+       }
+   }
+
+   stage('Push image for haraka-mail')
+   {
+    node
+       {
+         try
+         {
+            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub')
+            {
+             app.push("${env.BUILD_NUMBER}")
+             app.push("dev")
+            }
+            currentBuild.result = 'SUCCESS'
+         }
+         catch(any)
+         {
+           currentBuild.result = 'FAILURE'
+           throw any
+         }
+         finally
+         {
+           step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: '$dev_email_id', sendToIndividuals: true])
+         }
+       }
+    }
+}
