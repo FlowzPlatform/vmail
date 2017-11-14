@@ -1,0 +1,42 @@
+version: '2'
+services:
+  rethinkdb:
+    image: rethinkdb
+    volumes:
+    - /var/www/rethinkdb_data:/data
+    ports:
+    - 28015:28015
+    - 29015:29015
+    - 8045:8080
+
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.3
+    container_name: elasticsearch1
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+  haraka-server:
+    image: avsani/haraka-server
+    ports:
+    - "25:25"
+    depends_on:
+      - rethinkdb
+      - elasticsearch1
+
+volumes:
+  esdata1:
+    driver: local
+
+networks:
+  esnet:

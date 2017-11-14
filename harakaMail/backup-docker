@@ -1,0 +1,24 @@
+FROM centos:7
+#MAINTAINER flowz <dm@abc.com>
+RUN yum -y update && yum -y upgrade && \
+yum -y install spamassassin git curl wget
+RUN curl -sL https://rpm.nodesource.com/setup_7.x | bash -
+RUN yum install -y nodejs gcc-c++ make
+
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY . /usr/src/app
+
+# Install Haraka
+RUN npm install -g Haraka
+RUN haraka -i /usr/src/app
+
+# Install app dependencies
+COPY package.json /usr/src/app/
+RUN npm install
+
+EXPOSE 25
+
+CMD ["haraka", "-c", "/usr/src/app/"]

@@ -1,5 +1,4 @@
 FROM ubuntu:16.04
-MAINTAINER flowz <dm@officebrain.com>
 
 # install dependencies
 RUN apt-get update \
@@ -27,8 +26,8 @@ ADD . /opt/app
 RUN npm install
 
 #build application
-ENV microUrl="http://162.242.223.167:3035"
-ENV serverBaseUrl="http://162.242.223.167:3037"
+ENV microUrl="http://localhost:3035"
+ENV serverBaseUrl="http://localhost:3037"
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
 #RUN cp /opt/app/.htaccess /var/www/html/
