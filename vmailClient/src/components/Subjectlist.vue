@@ -11,9 +11,9 @@
 		<nav id="spy">
       <ul class="subject-nav nav">
         <li class="subject-brand" :id="'emailSubject'+key" v-for="(emailSubject,key) in $store.state.subjects" v-bind:class="{ unreadAlert : emailSubject.unread }"> 
-          <a v-on:click="getEmailConversion(key,emailSubject.messageId)">
-          	<span class="subDiv" :title="emailSubject.subject">{{emailSubject.subject}}</span>
-          	<span class="subjectDate">{{emailSubject.created | dateFormat(dateType,dateFormat) }}</span>
+          <a v-on:click="getEmailConversion(key,emailSubject.messageId)" class="row">
+          	<span class="subDiv col-md-8" :title="emailSubject.subject">{{emailSubject.subject}}</span>
+          	<span class="subjectDate col-md-4">{{emailSubject.created | dateFormat(dateType,dateFormat) }}</span>
           </a>
         </li>
       </ul>
@@ -43,6 +43,7 @@ var moment = require('moment')
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
     		this.$store.state.composeOpen = false
     		this.$store.state.settingOpen = false
     		this.$store.state.displayReply = false
@@ -57,6 +58,7 @@ var moment = require('moment')
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
     		this.$store.state.composeOpen = true
     		this.$store.state.settingOpen = false
     		this.$store.state.displayReply = false
@@ -69,6 +71,7 @@ var moment = require('moment')
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
     		this.$store.state.composeOpen = false
     		this.$store.state.settingOpen = false
     		this.$store.state.displayReply = false
@@ -109,6 +112,9 @@ var moment = require('moment')
     width: 100%;
     list-style: none;
     margin-top: 27px;
+    height: 78vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .subject-nav li {
     line-height: 40px;
@@ -118,6 +124,7 @@ var moment = require('moment')
     color: #337ab7;
     display: block;
     padding-left: 0px;
+    width: 100%;
     text-decoration: none;
   }
   .subject-nav li:hover{
@@ -151,6 +158,9 @@ var moment = require('moment')
     font-size: 14px;
     font-weight: 300;
     color: #337ab7;
+    overflow : hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     /*font-family: sans-serif;*/
   }
   .buttons{
@@ -168,7 +178,6 @@ var moment = require('moment')
     border-left: 4px solid #ed6b75;
   }
   .subDiv{
-    width: 220px;
     overflow: hidden;
     text-align: left;
     display: block;

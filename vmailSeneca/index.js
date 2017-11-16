@@ -7,10 +7,10 @@ const nodemailer = require('nodemailer')
 const cors = require('cors')
 var icalToolkit = require('ical-toolkit')
 var builder = icalToolkit.createIcsFileBuilder()
-
 var seneca = Seneca()
 let expObj = Express()
 expObj.use(cors())
+let smtpSettings = require('config')
 
 var Routes = [{
   prefix: '/email',
@@ -62,10 +62,11 @@ async function sendEmail(mailOptions) {
     mailOptions.cc = (mailOptions.cc) ? mailOptions.cc : []
     mailOptions.bcc = (mailOptions.bcc) ? mailOptions.bcc : []
     mailOptions.html = (mailOptions.body) ? mailOptions.body : ''
-      
+
+
     let auth = {
-      user: "xxxxxxxxx@gmail.com",
-      pass: "xxxxxxxxxx"
+      user: smtpSettings.auth.user,
+      pass: smtpSettings.auth.pass
     }
     if(mailOptions.icalStartDate!='' && mailOptions.icalStartDate!=undefined && mailOptions.icalStartDate!='Invalid date'
       && mailOptions.icalStartTime!='' && mailOptions.icalStartTime!=undefined && mailOptions.icalStartTime!='Invalid time'){
@@ -108,9 +109,9 @@ async function sendEmail(mailOptions) {
     }
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true, // secure:true for port 465, secure:false for port 587
+      host: smtpSettings.connection.host,
+      port: smtpSettings.connection.port,
+      secure: smtpSettings.connection.secure,
       auth: auth
     })
 

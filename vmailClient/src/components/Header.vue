@@ -42,6 +42,7 @@ export default {
   methods:{
   	logout: function() {
       localStorage.removeItem("token")
+      localStorage.clear()
       location.reload()
     },
     openSetting(){
@@ -50,6 +51,7 @@ export default {
       this.$store.state.replyDetails.from = ''
       this.$store.state.replyDetails.parentId = ''
       this.$store.state.replyDetails.subject = ''
+      this.$store.state.mjmlTheme = ''
   		this.$store.state.composeOpen = false
   		this.$store.state.settingOpen = true
   		this.$store.state.displayReply = false

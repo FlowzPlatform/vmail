@@ -4,34 +4,34 @@
       <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
     </div>
     <div v-if="emailDetail">
-      <div v-if="emailDetail.emailType==undefined">
+      <div v-if="emailDetail.received">
   	    <h2>
   	    	<span class="icon icon-star-large"></span>
   	    	{{emailDetail.subject}}
   	    </h2>
   	    <div class="meta-data">
   	      <p>
-  	        <img src="http://api.randomuser.me/portraits/med/men/66.jpg" class="avatar">
+  	        <img src="http://mangalayatan.in/wp-content/uploads/2016/01/member1.jpg" class="avatar">
   	        {{emailDetail.from.value[0].address}}
-  	        <span class="date" style="float: right;">{{emailDetail.date | dateFormat(dateType) }}</span>
+  	        <span class="date" style="float: right;">{{emailDetail.date | dateFormat(dateType,dateFormat) }}</span>
   	      </p>
   	    </div>
   	    <div class="body" v-html="this.emailDetail.html"></div>
       </div>
-      <div v-if="emailDetail.emailType!=undefined">
+      <!-- <div v-if="!emailDetail.received">
         <h2>
           <span class="icon icon-star-large"></span>
-          {{emailDetail.data.subject}}
+          {{emailDetail.subject}}
         </h2>
         <div class="meta-data">
           <p>
-            <img src="http://api.randomuser.me/portraits/med/men/66.jpg" class="avatar">
-            {{emailDetail.data.from}}
-            <span class="date" style="float: right;">{{emailDetail.sendedAt | dateFormat(dateType) }}</span>
+            <img src="http://mangalayatan.in/wp-content/uploads/2016/01/member1.jpg" class="avatar">
+            {{emailDetail.from.value[0].address}}
+            <span class="date" style="float: right;">{{emailDetail.date | dateFormat(dateType,dateFormat) }}</span>
           </p>
         </div>
-        <div class="body" v-html="this.emailDetail.data.body"></div>
-      </div>
+        <div class="body" v-html="this.emailDetail.html"></div>
+      </div> -->
 	  </div>
   </section>
 </template>
@@ -44,7 +44,8 @@ var moment = require('moment')
     name: 'emailDetail',
     data(){
       return {
-        dateType: this.$store.state.dateFormat
+        dateType: this.$store.state.dateType,
+        dateFormat: this.$store.state.dateFormat
       }
     },
 	  computed: {
@@ -54,14 +55,12 @@ var moment = require('moment')
 	    }
 	  },
     filters: {
-      dateFormat(date,type){
+      dateFormat(date,dateType,dateFormat){
         let myDate;
-        if(type == 'relative')
+        if(dateType!='relative')
+          myDate = moment(date).format(dateFormat)
+        else
           myDate = moment(date).fromNow()
-        else if(type == 'dateType1')
-          myDate = moment(date).format('HH:mm a DD/MM/YYYY')
-        else if(type == 'dateType2')
-          myDate = moment(date).format('DD/MM/YY')
         return myDate
       }
     }
@@ -89,5 +88,10 @@ var moment = require('moment')
 }
 .emailDetail .body {
   padding: 20px 30px;
+}
+.avatar{
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
 }
 </style>

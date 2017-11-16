@@ -6,7 +6,7 @@
           <li class="sidebar-brand" :id="'emailGroup'+key" v-for="(emailData,key) in emailGroups"> 
             <a v-on:click="getEmailSubjects(key,emailData.emailid)">
               {{emailData.emailid}}
-              <span class="btn__badge" v-if="emailData.unreadCount>0">{{emailData.unreadCount}}</span>
+              <span class="btn__badge">{{emailData.unreadCount}}/{{emailData.totalCount}}</span>
             </a>
           </li>
         </ul>
@@ -23,12 +23,12 @@
 <style scoped>
 .btn__badge {
   height: 20px;
-  width: 20px;
+  width: 32px;
   color: #ffffff;
   float: right;
   position: absolute;
   background-color: #36c6d3;
-  border-radius: 50%;
+  border-radius: 15%;
   text-indent: 0px;
   text-align: center;
   line-height: 20px;
@@ -85,6 +85,7 @@
   color: #b4bcc8;
   display: block;
   text-decoration: none;
+  padding-left: 0px;
 }
 .sidebar-nav li:hover{
   background-color: #2c3542;
@@ -139,30 +140,10 @@ const app = feathers().configure(socketio(io(baseUrl)))
       sidebarActivity(){
         this.$store.state.sidebarOpen = !this.$store.state.sidebarOpen
       },
-      emailGroupService: function() {
-        let self = this
-        return axios({
-          method: 'get',
-          url: process.env.serviceUrl+'/emailGroups',
-          headers: {
-            'authorization': localStorage.getItem("token")
-          }
-        })
-        .then(response => {
-          self.emailGroups = response.data
-        })
-        .catch(function(e){
-          if(e.response.status === 401){
-            localStorage.removeItem("token")
-            self.$store.state.loginToken = null
-          }
-        })
-      },
       async getEmailSubjects(groupkey,emailId){
         let subKey = localStorage.getItem(emailId)
         $(".sidebar-brand").removeClass("active")
         $("#emailGroup"+groupkey).addClass("active")
-        $(".subject-brand").removeClass("active")
         this.$store.state.composeOpen = false
         this.$store.state.settingOpen = false
         this.$store.state.displayReply = false
@@ -184,11 +165,13 @@ const app = feathers().configure(socketio(io(baseUrl)))
         localStorage.setItem(this.$store.state.selectedEmailId,subjectKey)
         $(".subject-brand").removeClass("active")
         $("#emailSubject"+subjectKey).addClass("active")
+        $("#emailSubject"+subjectKey).removeClass("unreadAlert")
         this.$store.state.replyDetails.to = []
         this.$store.state.replyDetails.cc = []
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
         this.$store.state.composeOpen = false
         this.$store.state.settingOpen = false
         this.$store.state.displayReply = false
@@ -196,26 +179,50 @@ const app = feathers().configure(socketio(io(baseUrl)))
         this.$store.state.mjmlOpen = false
         this.$store.state.selectedSubjectId = rId
         this.$store.dispatch('getConversation',rId)
+      },
+      emailGroupService(){
+        let self = this
+        return axios({
+          method: 'get',
+          url: process.env.serviceUrl+'/emailGroups',
+          headers: {
+            'authorization': localStorage.getItem("token")
+          }
+        })
+        .then(async response => {
+          if(response){
+            self.emailGroups = response.data
+            if(self.emailGroups.length>0){
+              await self.getEmailSubjects(0,self.emailGroups[0].emailid)
+              $("#emailGroup0").addClass("active")
+            }
+          }
+        })
+        .catch(function(e){
+          if(e.response.status === 401){
+            localStorage.removeItem("token")
+            self.$store.state.loginToken = null
+          }
+        })
       }
     },
-    async mounted() {
-      await this.emailGroupService()
-      if(this.emailGroups.length>0)
-        await this.getEmailSubjects(0,this.emailGroups[0].emailid)
-
+    mounted() {
+      this.emailGroupService()
       app.service("mailservice").on("created", (message) => {
-        this.emailGroupService()
-        if(this.$store.state.selectedEmailId!='')
-          this.$store.dispatch('getSubjects',this.$store.state.selectedEmailId)
-        if(this.$store.state.selectedSubjectId!='')
-          this.$store.dispatch('getConversation',this.$store.state.selectedSubjectId)
+        this.emailGroups.push(message)
+        let emailId = this.$store.state.selectedEmailId
+        let groupkey = this.emailGroups.indexOf(this.$store.state.selectedEmailId)
+        this.getEmailSubjects(groupkey,emailId)
       })
       app.service("mailservice").on("updated", (message) => {
-        this.emailGroupService()
-        if(this.$store.state.selectedEmailId!='')
-          this.$store.dispatch('getSubjects',this.$store.state.selectedEmailId)
-        if(this.$store.state.selectedSubjectId!='')
-          this.$store.dispatch('getConversation',this.$store.state.selectedSubjectId)
+        let index = this.emailGroups.map(a => a.emailid).indexOf(message.emailid)
+        this.emailGroups[index].totalCount = message.totalCount
+        this.emailGroups[index].unreadCount = message.unreadCount
+        if(message.emailid == this.$store.state.selectedEmailId){
+          let emailId = this.$store.state.selectedEmailId
+          let groupkey = this.emailGroups.indexOf(this.$store.state.selectedEmailId)
+          this.getEmailSubjects(groupkey,emailId)
+        }
       })
 
       $(document).ready(function() {

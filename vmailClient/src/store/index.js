@@ -29,7 +29,8 @@ export const store = new Vuex.Store({
     emailDetail:'',
     dateFormat: 'DD/MM/YY',
     dateType: 'relative',
-    userDetails: ''
+    userDetails: '',
+    mjmlTheme: ''
   },
   actions: {
     async getSubjects({ commit,state }, emailId) {
@@ -69,16 +70,17 @@ export const store = new Vuex.Store({
         }
       })
     },
-    async getEmailDetail({ dispatch,commit,state }, rId) {
+    async getEmailDetail({ dispatch,commit,state }, s3Key) {
       state.emailDetail = ''
       await axios({
         method: 'get',
-        url: process.env.serviceUrl+'/emailDetail/'+rId,
+        url: process.env.serviceUrl+'/emailDetail?s3Key='+s3Key,
         headers: {
           'authorization' : localStorage.getItem("token")
         }
       })
       .then(async response => {
+        response.data['received'] = true 
         state.emailDetail = response.data
       })
       .catch(function(e){
@@ -86,6 +88,14 @@ export const store = new Vuex.Store({
           localStorage.removeItem("token")
           state.loginToken = null
         }
+      })
+    },
+    async parseEmail(email) {
+      return new Promise((resolve, reject) => {
+        const simpleParser = require('mailparser').simpleParser;
+        simpleParser(email, (err, mail) => {
+          resolve(mail);
+        })
       })
     }
   }
