@@ -12,6 +12,7 @@ vmailClient/yarn-debug.log*
 vmailClient/yarn-error.log*
 
 vmailServer/node_modules/
+vmailServer/rethinkdb_data/
 
 vmailServices/node_modules/
 vmailServices/email-services/node_modules/
