@@ -172,9 +172,9 @@ async function filterReplyMails (plugin, message) {
       else
         strMSG = message.textAsHtml
 
-      plugin.logerror('=================================text html==============================')
-      plugin.logerror(message)
-      plugin.logerror('=================================text html end==============================')
+      // plugin.logerror('=================================text html==============================')
+      // plugin.logerror(message)
+      // plugin.logerror('=================================text html end==============================')
 
       message.textAsHtml = await parseBody(strMSG, plugin, 'html')
                                   .catch((err) => {
