@@ -172,14 +172,20 @@ async function filterReplyMails (plugin, message) {
       else
         strMSG = message.textAsHtml
 
-      // plugin.logerror('=================================text html==============================')
-      // plugin.logerror(message)
-      // plugin.logerror('=================================text html end==============================')
+      plugin.logerror('=================================text html==============================')
+      plugin.logerror(message)
+      plugin.logerror('=================================text html end==============================')
 
       message.textAsHtml = await parseBody(strMSG, plugin, 'html')
                                   .catch((err) => {
                                     plugin.logerror(err)
                                   })
+      if (message.textAsHtml == '' && message.textAsHtml && message.textAsHtml !== '') {
+        message.textAsHtml = await parseBody(message.textAsHtml, plugin, 'html')
+                                    .catch((err) => {
+                                      plugin.logerror(err)
+                                    })
+      }
       message.html = message.textAsHtml
       // plugin.logerror('=================================text html==============================')
       // plugin.logerror(message.html)
@@ -429,8 +435,8 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
     .insert(messageData)
     .run(pluginObj.rethinkDBConnection)
   } catch (err) {
-    plugin.logerror('======save Email To RethinkDB=====')
-    plugin.logerror(util.inspect(err))
+    pluginObj.logerror('======save Email To RethinkDB=====')
+    pluginObj.logerror(util.inspect(err))
   } finally {
 
   }
