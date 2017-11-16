@@ -15,19 +15,19 @@ let env_rhost = process.env.rhost
 let env_rport = process.env.rport
 let env_rdb = process.env.rdb
 let env_senecaUrl = process.env.senecaurl
-let env_privateKey = process.env.privatekey 
+let env_privateKey = process.env.privatekey
 let rhost,rport,rdb,senecaUrl,privateKey
 
 /*------------------------------------------------ RETHINK SETTINGS ------------------------------------------*/
-if(process.env.rhost) 
+if(process.env.rhost)
   rhost = env_rhost
 else
   rhost = config.rhost
-if(process.env.rport) 
+if(process.env.rport)
   rport = env_rport
 else
   rport = config.rport
-if(process.env.rdb) 
+if(process.env.rdb)
   rdb = env_rdb
 else
   rdb = config.rdb
@@ -135,7 +135,7 @@ function readEmailId(mid,sid) {
   .filter(
     rethinkDBObj.row('rcpTo').contains(sid)
     .and(rethinkDBObj.row('received').eq(true))
-    .and(rethinkDBObj.row('read').eq(false))  
+    .and(rethinkDBObj.row('read').eq(false))
     .or(rethinkDBObj.row('data')('from').eq(sid))
   ).count()
   .run(rethinkConnection, function(err, cursor) {
@@ -144,7 +144,7 @@ function readEmailId(mid,sid) {
     .filter({'emailid' : sid})
     .run(rethinkConnection, function(err, cursor) {
       cursor.toArray(function(err, result) {
-        if(result[0].unreadCount>0){
+        if(result[0].unreadCount && result[0].unreadCount>0){
           rethinkDBObj.table('emailIds')
           .filter({'emailid' : sid})
           .update({'unreadCount' : rethinkDBObj.row('unreadCount').sub(count)})
@@ -163,7 +163,7 @@ function updateEmails(mid,sid) {
   .or(rethinkDBObj.row('headers')('messageId')
   .eq(mid)))
   .filter(
-    rethinkDBObj.row('rcpTo').contains(sid)  
+    rethinkDBObj.row('rcpTo').contains(sid)
     .or(rethinkDBObj.row('data')('from').eq(sid))
   )
   .orderBy(rethinkDBObj.asc('created'))
@@ -203,7 +203,7 @@ const emailConversation = cors(jwtAuth(privateKey)(async(req, res) => {
   .or(rethinkDBObj.row('headers')('messageId')
   .eq(req.query.mid)))
   .filter(
-    rethinkDBObj.row('rcpTo').contains(req.query.sid)  
+    rethinkDBObj.row('rcpTo').contains(req.query.sid)
     .or(rethinkDBObj.row('data')('from').eq(req.query.sid))
   )
   .orderBy(rethinkDBObj.asc('created'))
@@ -236,7 +236,7 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
       req['subject'] = 'untitled subject'
     if(req.body == undefined)
       req['body'] = 'null body'
-    
+
     //---------------------- set inReplyTo and references of parent email
     if (req.parentId != '' && req.parentId != undefined) {
       let parentEmailData = await getParentEmailData(req.parentId);
@@ -260,7 +260,7 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
     //----------------------  get response of seneca service
     const emailSendResponse = await rp(response);
     //----------------------  save email subjects
-    if (req.parentId == '' || req.parentId == undefined) 
+    if (req.parentId == '' || req.parentId == undefined)
       saveSubjects({'from':req.from,'messageId':emailSendResponse.response.messageId,'subject':req.subject})
     //----------------------  save calendar events
     if(req.icalStartDate!='' && req.icalStartDate!=undefined && req.icalStartDate!='Invalid date'
@@ -271,9 +271,9 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
     //----------------------  insert email data
     let rcpTo = req.to.concat(req.cc).concat(req.bcc)
     await rethinkDBObj.table('emails')
-    .insert({ 
+    .insert({
       'created' : rethinkDBObj.ISO8601(new Date().toISOString()),
-      // 'attachment' : false, 
+      // 'attachment' : false,
       'received' : false,
       // 'read': true,
       'calEvent' : req.calEvent,
