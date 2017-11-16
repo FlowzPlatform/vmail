@@ -10,6 +10,7 @@ var builder = icalToolkit.createIcsFileBuilder()
 var seneca = Seneca()
 let expObj = Express()
 expObj.use(cors())
+let smtpSettings = require('config')
 
 var Routes = [{
   prefix: '/email',
@@ -55,7 +56,6 @@ seneca.add({
   }
 })
 
-
 async function sendEmail(mailOptions) {
   return new Promise((resolve, reject) => {
     mailOptions.to = mailOptions.to
@@ -65,8 +65,8 @@ async function sendEmail(mailOptions) {
 
 
     let auth = {
-      user: 'obsoftcare@gmail.com',
-      pass: 'Welcome123@'
+      user: smtpSettings.auth.user,
+      pass: smtpSettings.auth.pass
     }
     if(mailOptions.icalStartDate!='' && mailOptions.icalStartDate!=undefined && mailOptions.icalStartDate!='Invalid date'
       && mailOptions.icalStartTime!='' && mailOptions.icalStartTime!=undefined && mailOptions.icalStartTime!='Invalid time'){
@@ -109,9 +109,9 @@ async function sendEmail(mailOptions) {
     }
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true, // secure:true for port 465, secure:false for port 587
+      host: smtpSettings.connection.host,
+      port: smtpSettings.connection.port,
+      secure: smtpSettings.connection.secure,
       auth: auth
     })
 

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "config": "^1.28.1",
     "cors": "^2.8.4",
     "express": "^4.15.3",
     "ical-toolkit": "^1.0.9",
