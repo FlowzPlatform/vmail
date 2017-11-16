@@ -7,7 +7,6 @@ const nodemailer = require('nodemailer')
 const cors = require('cors')
 var icalToolkit = require('ical-toolkit')
 var builder = icalToolkit.createIcsFileBuilder()
-
 var seneca = Seneca()
 let expObj = Express()
 expObj.use(cors())
@@ -56,16 +55,18 @@ seneca.add({
   }
 })
 
+
 async function sendEmail(mailOptions) {
   return new Promise((resolve, reject) => {
     mailOptions.to = mailOptions.to
     mailOptions.cc = (mailOptions.cc) ? mailOptions.cc : []
     mailOptions.bcc = (mailOptions.bcc) ? mailOptions.bcc : []
     mailOptions.html = (mailOptions.body) ? mailOptions.body : ''
-      
+
+
     let auth = {
-      user: "xxxxxxxxx@gmail.com",
-      pass: "xxxxxxxxxx"
+      user: 'obsoftcare@gmail.com',
+      pass: 'Welcome123@'
     }
     if(mailOptions.icalStartDate!='' && mailOptions.icalStartDate!=undefined && mailOptions.icalStartDate!='Invalid date'
       && mailOptions.icalStartTime!='' && mailOptions.icalStartTime!=undefined && mailOptions.icalStartTime!='Invalid time'){

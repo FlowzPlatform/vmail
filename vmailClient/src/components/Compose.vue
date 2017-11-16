@@ -66,6 +66,14 @@
 	border-top: 1px solid #cccccc !important;
 	border-bottom: 1px solid #cccccc !important;
 }
+.contentArea{
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	max-height: 450px;
+	border: 1px solid #dddddd;
+	overflow: auto;
+}
 </style>
 
 <style type="text/css">
@@ -87,6 +95,7 @@
 				<InputTag placeholder="Bcc" :tags='bccs' @tags-change="addbccs" v-if="this.showCcBcc"></InputTag>
 				<input type='text' class="subjectContent" placeholder="Subject" v-model='subject' />
 				<VueEditor v-model='content'></VueEditor>
+				<div v-html='mjml' v-if="this.$store.state.mjmlTheme != ''" class="contentArea"></div>
 				<div v-if="this.ical" style="padding-top: 5px;padding-bottom: 5px;">
 					<DatePicker type="date" placeholder="Choose date" v-model="icalDate"></DatePicker>
           <TimePicker format="HH:mm" placeholder="Choose time" v-model="icalTime"></TimePicker>
@@ -95,7 +104,7 @@
 				</div>
 				<button type="button" class="btn btn-success composeBtn" v-on:click="sendEmail">Send</button>
 				<button type="button" class="btn btn-primary composeBtn" v-on:click="icalEvent">Calender Invite</button>
-				<button type="button" class="btn btn-primary composeBtn" v-on:click="mjmlEvent">Mjml Editor</button>
+				<button type="button" class="btn btn-primary composeBtn" v-on:click="mjmlEvent">Templates</button>
 				<button type="button" class="btn btn-danger composeBtn" v-on:click="discard">Discard</button>
 			</div>
 		</div>
@@ -109,6 +118,7 @@ import InputTag from 'vue-tagsinput'
 import axios from 'axios'
 import _ from 'lodash'
 var moment = require('moment')
+import { mjml2html } from 'mjml'
 
   export default {
     name: 'compose',
@@ -129,7 +139,8 @@ var moment = require('moment')
 				icalTime: '',
 				icalDate: '',
 				icalSummary: '',
-				ical: false
+				ical: false,
+				mjml: ''
 			}
     },
     methods:{
@@ -170,6 +181,8 @@ var moment = require('moment')
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
+        this.$store.state.mjmlTheme = ''
     		this.$store.state.composeOpen = false
     		this.$store.state.settingOpen = false
     		this.$store.state.displayReply = false
@@ -185,6 +198,7 @@ var moment = require('moment')
 	        let cc = this.ccs;
 	        let bcc = this.bccs;
 	        let from = '';
+	        let body = this.content + this.mjml
 
 	        if (this.$store.state.replyDetails.from)
 	          from = this.$store.state.replyDetails.from;
@@ -197,7 +211,7 @@ var moment = require('moment')
 	          "bcc": bcc,
 	          "from": from,
 	          "subject": this.subject,
-	          "body": this.content,
+	          "body": body,
 	          "replyTo": from,
 	          "parentId": this.$store.state.replyDetails.parentId,
 	          "icalStartTime": moment(this.icalTime).format('HH:mm:ss'),
@@ -229,6 +243,7 @@ var moment = require('moment')
 			        self.$store.state.replyDetails.from = ''
 			        self.$store.state.replyDetails.parentId = ''
 			        self.$store.state.replyDetails.subject = ''
+			        self.$store.state.mjmlTheme = ''
 			        self.icalTime = ''
 			        self.icalDate = ''
 			        self.icalSummary = ''
@@ -272,12 +287,19 @@ var moment = require('moment')
 	      this.$store.state.replyDetails.from = ''
 	      this.$store.state.replyDetails.parentId = ''
 	      this.$store.state.replyDetails.subject = ''
+	      this.$store.state.mjmlTheme = ''
 	  		this.$store.state.composeOpen = false
 	  		this.$store.state.settingOpen = false
 	  		this.$store.state.displayReply = false
 	  		this.$store.state.calenderOpen = false
 	  		this.$store.state.mjmlOpen = true
 	    }
+    },
+    mounted(){
+    	if(this.$store.state.mjmlTheme != ''){
+    		let opt = mjml2html(this.$store.state.mjmlTheme)
+    		this.mjml = opt.html
+    	}
     }
   }
 </script>

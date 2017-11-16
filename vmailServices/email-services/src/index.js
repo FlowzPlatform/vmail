@@ -9,8 +9,21 @@ let config = require('config')
 let fs = require('fs')
 let Promise = require('promise')
 const rp = require('request-promise')
+const mime = require('mime')
+const path = require('path')
+let AWS = require('aws-sdk')
+let zlib = require('zlib')
+
+// const serve = require('serve')
+// const server = serve(__dirname, {
+//   port: 3001,
+//   ignore: ['node_modules']
+// })
+
 
 /*------------------------------------------------ ENV VAR SETTINGS ------------------------------------------*/
+let env_awsaccesskey = process.env.awsaccesskey
+let env_awsprivatekey = process.env.awsprivatekey
 let env_rhost = process.env.rhost
 let env_rport = process.env.rport
 let env_rdb = process.env.rdb
@@ -43,6 +56,15 @@ if(process.env.privatekey)
   privateKey = env_privateKey
 else
   privateKey = config.privateKey
+
+/*------------------------------------------------ AWS SETTINGS --------------------------------------------*/
+AWS.config.update({
+  region: config.awsRegion,
+  accessKeyId: env_awsaccesskey,
+  secretAccessKey: env_awsprivatekey
+});
+
+var s3 = new AWS.S3();
 
 /*------------------------------------------------ RETHINK CONNECTION ---------------------------------------*/
 let rethinkConnection = null
@@ -125,33 +147,55 @@ function readSubject(mid,sid) {
   .run(rethinkConnection)
 }
 
-/*------------------------------------------------ READ EMAIL-ID -------------------------------------------*/
-function readEmailId(mid,sid) {
-  rethinkDBObj.table('emails')
-  .filter(rethinkDBObj.row('headers')('references')
-  .contains(mid)
-  .or(rethinkDBObj.row('headers')('messageId')
-  .eq(mid)))
-  .filter(
-    rethinkDBObj.row('rcpTo').contains(sid)
-    .and(rethinkDBObj.row('received').eq(true))
-    .and(rethinkDBObj.row('read').eq(false))  
-    .or(rethinkDBObj.row('data')('from').eq(sid))
-  ).count()
-  .run(rethinkConnection, function(err, cursor) {
-    let count = cursor
-    rethinkDBObj.table('emailIds')
-    .filter({'emailid' : sid})
-    .run(rethinkConnection, function(err, cursor) {
-      cursor.toArray(function(err, result) {
-        if(result[0].unreadCount>0){
-          rethinkDBObj.table('emailIds')
-          .filter({'emailid' : sid})
-          .update({'unreadCount' : rethinkDBObj.row('unreadCount').sub(count)})
-          .run(rethinkConnection)
-        }
+/*------------------------------------------------ GET DATA FROM S3 ----------------------------------------*/
+async function getDataFromS3(params) {
+  return new Promise((resolve, reject) => {
+    s3.getObject(params, function(err, data) {
+      if (err) throw err;
+      zlib.unzip(data.Body, function(err, buf) {
+        return resolve(buf.toString("utf8"))
       })
     })
+  })
+}
+
+/*------------------------------------------------ GET DATA FROM S3 ----------------------------------------*/
+async function parseEmail(email) {
+  return new Promise((resolve, reject) => {
+    const simpleParser = require('mailparser').simpleParser;
+    simpleParser(email, (err, mail) => {
+      resolve(mail);
+    })
+  })
+}
+
+/*------------------------------------------------ READ EMAIL-ID -------------------------------------------*/
+async function readEmailId(mid,sid) {
+  await rethinkDBObj.table('emails')
+  .filter(rethinkDBObj.row('headers')('references').contains(mid)
+  .or(rethinkDBObj.row('headers')('messageId').eq(mid)))
+  .filter(
+    rethinkDBObj.row('rcpTo').contains(sid)
+    .or(rethinkDBObj.row('data')('from').eq(sid))
+    .and(rethinkDBObj.row('received').eq(true))
+    .and(rethinkDBObj.row('read').eq(false))  
+  )
+  .update({'read' : true})
+  .run(rethinkConnection)
+
+  await rethinkDBObj.table('emails')
+  .filter(
+    rethinkDBObj.row('rcpTo').contains(sid)
+    .or(rethinkDBObj.row('data')('from').eq(sid))
+    .and(rethinkDBObj.row('received').eq(true))
+    .and(rethinkDBObj.row('read').eq(false))  
+  )
+  .count()
+  .run(rethinkConnection, function(err, cursor) {
+    rethinkDBObj.table('emailIds')
+    .filter({'emailid' : sid})
+    .update({'unreadCount' : cursor})
+    .run(rethinkConnection)
   })
 }
 
@@ -222,8 +266,6 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
   let inReplyTo = ''
   let references = []
   if(req.to!='' && req.to!=undefined){
-    //----------------------  save email-ids
-    saveEmailIds(req.from)
     //---------------------- set reply to email-id
     req['replyTo'] = req.from
 
@@ -239,6 +281,8 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
     
     //---------------------- set inReplyTo and references of parent email
     if (req.parentId != '' && req.parentId != undefined) {
+      //----------------------  save email-ids
+      saveEmailIds(req.from)
       let parentEmailData = await getParentEmailData(req.parentId);
       req['inReplyTo'] = parentEmailData.headers.messageId
       if (parentEmailData.headers.references == undefined) {
@@ -260,8 +304,9 @@ const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
     //----------------------  get response of seneca service
     const emailSendResponse = await rp(response);
     //----------------------  save email subjects
-    if (req.parentId == '' || req.parentId == undefined) 
+    if (req.parentId == '' || req.parentId == undefined){
       saveSubjects({'from':req.from,'messageId':emailSendResponse.response.messageId,'subject':req.subject})
+    }
     //----------------------  save calendar events
     if(req.icalStartDate!='' && req.icalStartDate!=undefined && req.icalStartDate!='Invalid date'
       && req.icalStartTime!='' && req.icalStartTime!=undefined && req.icalStartTime!='Invalid time'){
@@ -325,8 +370,76 @@ const requestIcalEvents = cors(jwtAuth(privateKey)(async(req, res) => {
 
 /*---------------------------------------------- SWAGGER DOCS SERVICE -------------------------------------*/
 const docs = cors(async(req, res) => {
-  send(res,200,'response')
+  // let file = path.join(__dirname, './public/index.html');
+
+  // fs.exists(file, exist => {
+  //   if (!exist) {
+  //     send(res, 404)
+  //     return
+  //   }
+
+  //   if (fs.statSync(file).isDirectory()) {
+  //     file += path.join(__dirname, './public/index.html');
+  //   }
+
+  //   fs.readFile(file, (err, data) => {
+  //     if (err) {
+  //       send(res, 500)
+  //     } else {
+  //       res.setHeader('Content-type', mime.getType(file))
+  //       send(res, 200, data)
+  //     }
+  //   })
+  // })
 })
+
+/*---------------------------------------------- EMAIL-DETAIL SERVICE -------------------------------------*/
+const emailDetail = cors(jwtAuth(privateKey)(async(req, res) => {
+  let params = {
+    Bucket: 'airflowbucket1',
+    Key: 'pass/'+req.query.s3Key
+  }  
+  let data = await getDataFromS3(params)
+  data = await parseEmail(data)
+  send(res, 200, data)
+}))
+
+/*---------------------------------------------- SAVE MJML SERVICE ----------------------------------------*/
+const saveMjml = cors(jwtAuth(privateKey)(async(req, res) => {
+  req = await json(req)
+  await rethinkDBObj.table('mjmlTemplates')
+  .insert({
+    'name' : req.name,
+    'theme' : req.theme
+  })
+  .run(rethinkConnection)
+  send(res, 200, {'success':'theme saved successfully'})
+}))
+
+/*---------------------------------------------- MJML LIST SERVICE ---------------------------------------*/
+const mjmlList = cors(jwtAuth(privateKey)(async(req, res) => {
+  await rethinkDBObj.table('mjmlTemplates')
+  .run(rethinkConnection, function(err, cursor) {
+    if (err) throw err
+    cursor.toArray(function(err, response) {
+      if (err) throw err
+      send(res,200,response)
+    })
+  })
+}))
+
+/*---------------------------------------------- SELECTED MJML SERVICE -----------------------------------*/
+const getTheme = cors(jwtAuth(privateKey)(async(req, res) => {
+  await rethinkDBObj.table('mjmlTemplates')
+  .filter({'id' : req.params.id})
+  .run(rethinkConnection, function(err, cursor) {
+    if (err) throw err
+    cursor.toArray(function(err, response) {
+      if (err) throw err
+      send(res,200,response)
+    })
+  })
+}))
 
 /*---------------------------------------------- NOT FOUND SERVICE ----------------------------------------*/
 const notfound = cors(jwtAuth(privateKey)((req, res) => send(res, 200,"")))
@@ -336,8 +449,12 @@ module.exports = router(
   get('/emailGroups', emailGroups),
   get('/emailSubjects', emailSubjects),
   get('/emailConversation', emailConversation),
+  get('/emailDetail', emailDetail),
   post('/sendEmail', sendEmail),
   get('/requestIcalEvents', requestIcalEvents),
+  post('/saveMjml', saveMjml),
+  get('/mjmlList', mjmlList),
+  get('/getTheme/:id', getTheme),
   get('/docs', docs),
   options('/*', notfound)
 )

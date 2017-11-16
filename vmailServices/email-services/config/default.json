@@ -1,7 +1,8 @@
 {
-  "rhost": "xxx.xx.xx.xx",
-  "rport": "xxxxx", //for example 28015
-  "rdb": "xxxxxxx",
+  "rhost": "localhost",
+  "rport": "28015",
+  "rdb": "virtualEMail",
   "senecaUrl": "http://localhost:4000",
-  "privateKey": "xxxxxxxxxx"
+  "privateKey": "etyetrytuye",
+  "awsRegion": "usa"
 }
