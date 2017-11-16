@@ -14,14 +14,19 @@
     "node": "^7.7.3"
   },
   "dependencies": {
+    "aws-sdk": "^2.148.0",
     "config": "^1.26.1",
+    "mailparser": "^2.1.0",
     "micro": "^7.3.3",
     "micro-cors": "0.0.4",
     "micro-jwt-auth": "^1.9.0",
     "microrouter": "^2.2.0",
+    "mime": "^2.0.3",
+    "path": "^0.12.7",
     "promise": "^8.0.1",
     "request": "^2.81.0",
-    "rethinkdb": "^2.3.3"
+    "rethinkdb": "^2.3.3",
+    "serve": "^6.4.1"
   },
   "license": "MIT",
   "devDependencies": {

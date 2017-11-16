@@ -69,6 +69,7 @@ var moment = require('moment')
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.mjmlTheme = ''
         this.$store.state.composeOpen = false
         this.$store.state.settingOpen = false
         this.$store.state.displayReply = false

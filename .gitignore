@@ -2,7 +2,7 @@ harakamail/node_modules/
 harakamail/queue/
 harakamail/rethinkdb_data/
 
-seneca-web-email/node_modules/
+vmailSeneca/node_modules/
 
 vmailClient/.DS_Store
 vmailClient/node_modules/

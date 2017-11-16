@@ -1,0 +1,224 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "",
+    "title": "Virtual Email Services"
+  },
+  "tags": [
+    {
+      "name": "Email services",
+      "description": "Everything about email services"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "host": "172.16.60.111:3000",
+  "paths": {
+    "/emailGroups": {
+      "get": {
+        "tags": [
+          "Email services"
+        ],
+        "summary": "Get all received email ids",
+        "description": "It will give you an array of all received email-ids",
+        "consumes": [
+          "application/JSON"
+        ],
+        "produces": [
+          "application/JSON"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/emailSubjects": {
+      "get": {
+        "tags": [
+          "Email services"
+        ],
+        "summary": "Get coversation subjects",
+        "description": "It will list out all subjects or topics of perticular email-id",
+        "consumes": [
+          "application/JSON"
+        ],
+        "produces": [
+          "application/JSON"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid inputs"
+          }
+        }
+      }
+    },
+    "/emailConversation/{rid}": {
+      "get": {
+        "tags": [
+          "Email services"
+        ],
+        "summary": "Get conversation on perticular subject",
+        "description": "Rethink unique id should be of root mail. You can get it by running above emailSubjects service",
+        "consumes": [
+          "application/JSON"
+        ],
+        "produces": [
+          "application/JSON"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "description": "you can get id in response of emailSubjects",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "invalid inputs"
+          }
+        }
+      }
+    },
+    "/emailDetail/{rid}": {
+      "get": {
+        "tags": [
+          "Email services"
+        ],
+        "summary": "Get details of an email",
+        "description": "Pass rethink unique id in headers and get detail of perticular email.",
+        "consumes": [
+          "application/JSON"
+        ],
+        "produces": [
+          "application/JSON"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "description": "Rethink unique id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "invalid inputs"
+          }
+        }
+      }
+    },
+    "/sendEmail": {
+      "post": {
+        "tags": [
+          "Email services"
+        ],
+        "summary": "Send an email",
+        "consumes": [
+          "application/JSON"
+        ],
+        "produces": [
+          "application/JSON"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sendEmailBody"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid inputs"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "sendEmailBody": {
+      "type": "object",
+      "required": [
+        "to"
+      ],
+      "properties": {
+        "to": {
+          "type": "string",
+          "example": "kavi.bhavsar22@officebrain.com,abc@gmail.com"
+        },
+        "cc": {
+          "type": "string",
+          "example": "kavi.bhavsar22@officebrain.com,abc@gmail.com"
+        },
+        "bcc": {
+          "type": "string",
+          "example": "kavi.bhavsar22@officebrain.com,abc@gmail.com"
+        },
+        "from": {
+          "type": "string",
+          "example": "kavi.bhavsar22@officebrain.com"
+        },
+        "subject": {
+          "type": "string",
+          "example": "this is test subject"
+        },
+        "body": {
+          "type": "string",
+          "example": "this is test body"
+        },
+        "parentId": {
+          "type": "string",
+          "example": ""
+        }
+      }
+    }
+  }
+}
