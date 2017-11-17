@@ -55,7 +55,7 @@ exports.register = async function() {
   this.S3Obj = new AWS.S3()
 }
 
-let onlyReplyMessage = ''
+
 exports.hook_queue = async function (next, connection) {
   let plugin = this
   let transaction = connection.transaction
@@ -63,7 +63,7 @@ exports.hook_queue = async function (next, connection) {
   // let emailTo = transaction.rcpt_to
   let attachedIdx = JSON.stringify(transaction.header.headers).indexOf('multipart/mixed')
 
-  transaction.message_stream = await parseEmail(plugin, transaction.message_stream)
+  let parseMailObject = await parseEmail(plugin, transaction.message_stream)
                                     .catch((err) => {
                                       plugin.logerror('======Parse mail cache 1=====')
                                       plugin.logerror(err)
@@ -71,25 +71,38 @@ exports.hook_queue = async function (next, connection) {
   // plugin.logerror("========================display Parse mail start==========================")
   // plugin.logerror(transaction.message_stream)
   // plugin.logerror("========================display Parse mail end==========================")
+
+  let onlyReplyMessage = {
+    html: '',
+    textAsHtml: '',
+    text: ''
+  }
   if (plugin.vmail.removeThreadedDuplicateBodyContent) {
-    transaction.message_stream = await filterReplyMails(plugin, transaction.message_stream)
+    parseMailObject = await filterReplyMails(plugin, parseMailObject)
                                         .catch((err) => {
                                           plugin.logerror('======filter Reply Mails=====')
                                           plugin.logerror(err)
                                         })
+    onlyReplyMessage = {
+      html: (parseMailObject.html) ? parseMailObject.html : '',
+      textAsHtml: (transaction.message_stream.textAsHtml) ? parseMailObject.textAsHtml : '',
+      text: (parseMailObject.text) ? parseMailObject.text : ''
+    }
+  } else {
+    onlyReplyMessage = {
+      html: (parseMailObject.html) ? parseMailObject.html : '',
+      textAsHtml: (transaction.message_stream.textAsHtml) ? parseMailObject.textAsHtml : '',
+      text: (parseMailObject.text) ? parseMailObject.text : ''
+    }
   }
 
-  onlyReplyMessage = {
-    html: transaction.message_stream.html,
-    text: (transaction.message_stream.text) ? transaction.message_stream.text : '',
-    textAsHtml: transaction.message_stream.textAsHtml
-  }
-
-  transaction.message_stream = await createMessgeObject(plugin, transaction.message_stream)
-                                    .catch((err) => {
-                                      plugin.logerror('======create Messge Object=====')
-                                      plugin.logerror(err)
-                                    })
+  transaction.onlyReplyMessage = onlyReplyMessage
+  //
+  // transaction.message_stream = await createMessgeObject(plugin, transaction.message_stream)
+  //                                   .catch((err) => {
+  //                                     plugin.logerror('======create Messge Object=====')
+  //                                     plugin.logerror(err)
+  //                                   })
 
   connection.relaying = true
   let gzip = zlib.createGzip()
@@ -98,7 +111,7 @@ exports.hook_queue = async function (next, connection) {
   // let gzipNew = zlib.createGzip()
   // let transformerNew = plugin.zipBeforeUpload ? gzipNew : new TransformStream()
   // let orignalBody = orignalMessageStream.pipe(transformerNew)
-  transaction.message_stream = orignalMessageStream
+  // transaction.message_stream = orignalMessageStream
 
   let s3 = plugin.S3Obj
   let addresses = plugin.copyAllAddresses ? transaction.rcpt_to : transaction.rcpt_to[0]
@@ -140,13 +153,14 @@ async function parseEmail (plugin, email) {
 
 async function parseBody (buf, plugin, type) {
   return new Promise((resolve, reject) => {
+    plugin.logerror("====================================path==========="+__dirname)
     try{
       let newBuff = ''
       let options = {
           mode: 'text',
           args: [type, buf],
-          scriptPath: '/var/www/node/harakamail/plugins/',
-          pythonPath: '/usr/bin/python3',
+          scriptPath:  '/var/www/node/harakamail/plugins/',
+          pythonPath: plugin.pythonPath
       }
       PythonShell.run('mailhtml.py', options, function(err, results) {
         if (err) {
@@ -167,26 +181,18 @@ async function filterReplyMails (plugin, message) {
   return new Promise(async(resolve, reject) => {
     try {
       let strMSG = null
-      if (message.html)
-        strMSG = message.html
-      else
-        strMSG = message.textAsHtml
-
-      plugin.logerror('=================================text html==============================')
-      plugin.logerror(message)
-      plugin.logerror('=================================text html end==============================')
-
-      message.textAsHtml = await parseBody(strMSG, plugin, 'html')
-                                  .catch((err) => {
-                                    plugin.logerror(err)
-                                  })
-      if (message.textAsHtml == '' && message.textAsHtml && message.textAsHtml !== '') {
+      if (message.html) {
+        message.html = await parseBody(message.html, plugin, 'html')
+                                    .catch((err) => {
+                                      plugin.logerror(err)
+                                    })
+      }
+      if (message.textAsHtml) {
         message.textAsHtml = await parseBody(message.textAsHtml, plugin, 'html')
                                     .catch((err) => {
                                       plugin.logerror(err)
                                     })
       }
-      message.html = message.textAsHtml
       // plugin.logerror('=================================text html==============================')
       // plugin.logerror(message.html)
       if (message.text) {
@@ -407,7 +413,9 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
     }
 
     let rcpTo = addresses.map(a => a.original.match(/\<([^)]+)\>/)[1])
-
+    if(rcpTo && !Array.isArray(rcpTo)) {
+      rcpTo = new Array(rcpTo)
+    }
     let messageData = {
       created : rethink.ISO8601(new Date().toISOString()),
       received : true,
@@ -418,7 +426,7 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
         to : to,
         cc : cc,
         subject : String(emailTrans.header.headers.subject).replace("[ '", '').replace("' ]", ''),
-        body : onlyReplyMessage
+        body : emailTrans.onlyReplyMessage
       },
       headers:{
         messageId : emailTrans.header.headers['message-id'][0],
@@ -437,10 +445,7 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
   } catch (err) {
     pluginObj.logerror('======save Email To RethinkDB=====')
     pluginObj.logerror(util.inspect(err))
-  } finally {
-
   }
-
 }
 
 function saveEmailToElasticSearch(emailTrans, pluginObj, attachedIdx) {
