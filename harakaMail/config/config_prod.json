@@ -25,6 +25,7 @@
     "enable": true
   },
   "vmail" : {
-    "removeThreadedDuplicateBodyContent": true
+    "removeThreadedDuplicateBodyContent": true,
+    "pythonPath": "/usr/bin/python3"
   }
 }

@@ -9,6 +9,7 @@ let AWS = require('aws-sdk'),
     async = require('async'),
     stream = require('stream'),
     Transform = require('stream').Transform
+// var socket = require('socket.io-client')('http://127.0.0.1:6000/', {reconnect: true})
 
 let enviroment = 'prod'
 if (process.env['NODE_ENV'] == 'dev')
@@ -55,41 +56,49 @@ exports.register = async function() {
   this.S3Obj = new AWS.S3()
 }
 
-let onlyReplyMessage = ''
+
 exports.hook_queue = async function (next, connection) {
   let plugin = this
   let transaction = connection.transaction
+  plugin.logerror("===Email queue start===")
+  plugin.logerror("===Email subject==="+String(transaction.header.headers.subject).replace("[ '", '').replace("' ]", '').trim())
+
   let orignalMessageStream = transaction.message_stream
   // let emailTo = transaction.rcpt_to
   let attachedIdx = JSON.stringify(transaction.header.headers).indexOf('multipart/mixed')
-
-  transaction.message_stream = await parseEmail(plugin, transaction.message_stream)
+  plugin.logerror("===parseEmail start===")
+  let parseMailObject = await parseEmail(plugin, transaction.message_stream)
                                     .catch((err) => {
                                       plugin.logerror('======Parse mail cache 1=====')
                                       plugin.logerror(err)
                                     })
+  plugin.logerror("===parseEmail end===")
   // plugin.logerror("========================display Parse mail start==========================")
   // plugin.logerror(transaction.message_stream)
   // plugin.logerror("========================display Parse mail end==========================")
   if (plugin.vmail.removeThreadedDuplicateBodyContent) {
-    transaction.message_stream = await filterReplyMails(plugin, transaction.message_stream)
+    plugin.logerror("===filterReplyMails start===")
+    parseMailObject = await filterReplyMails(plugin, parseMailObject)
                                         .catch((err) => {
                                           plugin.logerror('======filter Reply Mails=====')
                                           plugin.logerror(err)
                                         })
+    plugin.logerror("===filterReplyMails end===")
   }
 
-  onlyReplyMessage = {
-    html: transaction.message_stream.html,
-    text: (transaction.message_stream.text) ? transaction.message_stream.text : '',
-    textAsHtml: transaction.message_stream.textAsHtml
+  let onlyReplyMessage = {
+    html: (parseMailObject.html) ? parseMailObject.html : '',
+    textAsHtml: (transaction.message_stream.textAsHtml) ? parseMailObject.textAsHtml : '',
+    text: (parseMailObject.text) ? parseMailObject.text : ''
   }
 
-  transaction.message_stream = await createMessgeObject(plugin, transaction.message_stream)
-                                    .catch((err) => {
-                                      plugin.logerror('======create Messge Object=====')
-                                      plugin.logerror(err)
-                                    })
+  transaction.onlyReplyMessage = onlyReplyMessage
+  //
+  // transaction.message_stream = await createMessgeObject(plugin, transaction.message_stream)
+  //                                   .catch((err) => {
+  //                                     plugin.logerror('======create Messge Object=====')
+  //                                     plugin.logerror(err)
+  //                                   })
 
   connection.relaying = true
   let gzip = zlib.createGzip()
@@ -98,7 +107,7 @@ exports.hook_queue = async function (next, connection) {
   // let gzipNew = zlib.createGzip()
   // let transformerNew = plugin.zipBeforeUpload ? gzipNew : new TransformStream()
   // let orignalBody = orignalMessageStream.pipe(transformerNew)
-  transaction.message_stream = orignalMessageStream
+  // transaction.message_stream = orignalMessageStream
 
   let s3 = plugin.S3Obj
   let addresses = plugin.copyAllAddresses ? transaction.rcpt_to : transaction.rcpt_to[0]
@@ -109,12 +118,21 @@ exports.hook_queue = async function (next, connection) {
     Key: s3key,
     Body: body
   }
-
+  plugin.logerror("===S3 upload start===")
   s3.upload(params).on('httpUploadProgress', function(evt) {}).send(function(err, data) {
-    emailsSaveToDB (addresses, transaction, plugin, attachedIdx, s3key)
-    .then(result =>{ next(OK, 'Email Accepted.')})
-    .catch(err =>{ plugin.logerror('======S3 upload====='); plugin.logerror(util.inspect(err)); next()})
+    plugin.logerror("===S3 upload end===")
+    if(err) {
+      plugin.logerror('======S3 upload error=====')
+      plugin.logerror(util.inspect(err))
+      next()
+    } else {
+      plugin.logerror("===Email RethinkDb Save start===")
+      emailsSaveToDB (addresses, transaction, plugin, attachedIdx, s3key)
+      .then(result =>{next(OK, 'Email Accepted.'); plugin.logerror("===Email RethinkDb Save end===")})
+      .catch(err =>{ plugin.logerror('======S3 upload====='); plugin.logerror(util.inspect(err)); next()})
+    }
   })
+  plugin.logerror("===Email queue end===")
 }
 
 exports.shutdown = function() {
@@ -132,7 +150,8 @@ async function parseEmail (plugin, email) {
       })
     }
     catch(err) {
-      plugin.logerror(err)
+      plugin.logerror('===========parseEmail error=========')
+      plugin.logerror(util.inspect(err))
       reject(err)
     }
   })
@@ -140,21 +159,39 @@ async function parseEmail (plugin, email) {
 
 async function parseBody (buf, plugin, type) {
   return new Promise((resolve, reject) => {
-    try{
+    // plugin.logerror("====================================path==========="+plugin.vmail.pythonPath)
+    buf = new Buffer(buf).toString('base64')
+    // plugin.logerror("====================================path==========="+buf)
+    try {
       let newBuff = ''
       let options = {
           mode: 'text',
-          args: [type, buf],
-          scriptPath: '/var/www/node/harakamail/plugins/',
-          pythonPath: '/usr/bin/python3',
+          args: [type],
+          scriptPath: __dirname + '/',
+          pythonPath: plugin.vmail.pythonPath
       }
-      PythonShell.run('mailhtml.py', options, function(err, results) {
-        if (err) {
-          reject('fail')
-        } else {
-          // plugin.logerror(results[0])
-          resolve(results[0])
-        }
+      // PythonShell.run('mailhtml.py', options, function(err, results) {
+      //   if (err) {
+      //     reject('fail')
+      //   } else {
+      //     // plugin.logerror(results[0])
+      //     resolve(results[0])
+      //   }
+      // })
+
+      var pyshell = new PythonShell('mailhtml.py', options)
+
+      pyshell.stdout.on('data', function (message) {
+        //  plugin.logerror("====================================path==========="+ message)
+          resolve(message)
+      })
+
+      pyshell.send(buf)
+
+      pyshell.end(function (err) {
+          if (err) {
+            reject('End Script' + err)
+          }
       })
     }
     catch(err) {
@@ -167,26 +204,27 @@ async function filterReplyMails (plugin, message) {
   return new Promise(async(resolve, reject) => {
     try {
       let strMSG = null
-      if (message.html)
-        strMSG = message.html
-      else
-        strMSG = message.textAsHtml
-
-      // plugin.logerror('=================================text html==============================')
-      // plugin.logerror(message)
-      // plugin.logerror('=================================text html end==============================')
-
-      message.textAsHtml = await parseBody(strMSG, plugin, 'html')
-                                  .catch((err) => {
-                                    plugin.logerror(err)
-                                  })
-      message.html = message.textAsHtml
+      if (message.html) {
+        message.html = await parseBody(message.html, plugin, 'html')
+                                    .catch((err) => {
+                                      plugin.logerror('===========parseBody html error=========')
+                                      plugin.logerror(util.inspect(err))
+                                    })
+      }
+      if (message.textAsHtml) {
+        message.textAsHtml = await parseBody(message.textAsHtml, plugin, 'html')
+                                    .catch((err) => {
+                                      plugin.logerror('===========parseBody textAsHtml error=========')
+                                      plugin.logerror(util.inspect(err))
+                                    })
+      }
       // plugin.logerror('=================================text html==============================')
       // plugin.logerror(message.html)
       if (message.text) {
         message.text = await parseBody(message.text, plugin, 'plain')
                               .catch((err) => {
-                                plugin.logerror(err)
+                                plugin.logerror('===========parseBody plain error=========')
+                                plugin.logerror(util.inspect(err))
                               })
         // plugin.logerror('=================================filter==============================')
         // plugin.logerror(message)
@@ -243,7 +281,7 @@ async function emailsSaveToDB (addresses, transaction, plugin, attachedIdx, s3Ke
     }
     catch (err) {
       plugin.logerror('======emails Save To DB=====')
-      plugin.logerror(err)
+      plugin.logerror(util.inspect(err))
       reject(err)
     }
   })
@@ -306,28 +344,39 @@ async function saveEmailId(pluginObj, emailIdObj) {
 }
 
 function saveSubjects (subObj, pluginObj, emailTos) {
-  //
-  // pluginObj.logerror('=======================saveSubjects=====================')
-  // pluginObj.logerror(subObj.header.headers.references)
-  // pluginObj.logerror('=======================references====================='+emailTos)
-  // pluginObj.logerror(subObj.header.headers.references[0].replace('\n', ''))
+
 
   if(subObj.header.headers.references && subObj.header.headers.references !== undefined) {
 
-      let refArr = subObj.header.headers.references[0].replace('\n', '').split(' ')
+    let refArr = subObj.header.headers.references[0].replace('\n', '').split(' ')
+    refArr = refArr.map(function(a){return a.replace('\n', '')})
+    //pluginObj.logerror('=======================saveSubjects=====================')
+    //pluginObj.logerror(refArr)
+    //pluginObj.logerror('=======================references====================='+emailTos)
+    //pluginObj.logerror(subObj.header.headers.references[0].replace('\n', ''))
+
       let mainMessageId = refArr[0]
       rethink.db(pluginObj.rethinkDBConfig.db)
       .table(pluginObj.rethinkDBConfig.tblEmailSubjects)
-      .filter(rethink.row("emailId").eq(emailTos)
-      .and(rethink.row("messageId").eq(mainMessageId)))
-      .run(pluginObj.rethinkDBConnection, function(err, cursor) {
+      .filter(rethink.row('emailId').eq(emailTos))
+      .filter(function (doc) { return rethink.expr(refArr).contains(doc('messageId')) })
+      .orderBy(rethink.asc('created'))
+      .run(pluginObj.rethinkDBConnection, function (err, cursor) {
+        if (err) {
+          throw err
+        }
         cursor.toArray(function (err, result) {
+          if (err) {
+            throw err
+          }
+          // pluginObj.logerror('=======================Result Len=====================',result.length)
           if(result.length < 1) {
             let subject = {
               'emailId' : emailTos,
               'messageId' : subObj.header.headers['message-id'][0].replace(/\n/g, ''),
               'subject' : String(subObj.header.headers.subject).replace("[ '", '').replace("' ]", '').trim(),
               'created' : rethink.ISO8601(new Date().toISOString()),
+              'modified' : rethink.ISO8601(new Date().toISOString()),
               'unread' : true
             }
             rethink.db(pluginObj.rethinkDBConfig.db)
@@ -337,7 +386,8 @@ function saveSubjects (subObj, pluginObj, emailTos) {
           else{
             rethink.db(pluginObj.rethinkDBConfig.db)
             .table(pluginObj.rethinkDBConfig.tblEmailSubjects)
-            .update({'unread':true}).run(pluginObj.rethinkDBConnection)
+            .filter(rethink.row('messageId').eq(result[0]['messageId']))
+            .update({'unread': true,'modified':rethink.ISO8601(new Date().toISOString())}).run(pluginObj.rethinkDBConnection)
           }
         })
       })
@@ -347,6 +397,7 @@ function saveSubjects (subObj, pluginObj, emailTos) {
       'messageId' : subObj.header.headers['message-id'][0].replace(/\n/g, ''),
       'subject' : String(subObj.header.headers.subject).replace("[ '", '').replace("' ]", '').trim(),
       'created' : rethink.ISO8601(new Date().toISOString()),
+      'modified' : rethink.ISO8601(new Date().toISOString()),
       'unread' : true,
     }
     rethink.db(pluginObj.rethinkDBConfig.db)
@@ -401,7 +452,9 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
     }
 
     let rcpTo = addresses.map(a => a.original.match(/\<([^)]+)\>/)[1])
-
+    if(rcpTo && !Array.isArray(rcpTo)) {
+      rcpTo = new Array(rcpTo)
+    }
     let messageData = {
       created : rethink.ISO8601(new Date().toISOString()),
       received : true,
@@ -412,7 +465,7 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
         to : to,
         cc : cc,
         subject : String(emailTrans.header.headers.subject).replace("[ '", '').replace("' ]", ''),
-        body : onlyReplyMessage
+        body : emailTrans.onlyReplyMessage
       },
       headers:{
         messageId : emailTrans.header.headers['message-id'][0],
@@ -429,12 +482,9 @@ function saveEmailToRethinkDB(emailTrans, pluginObj, attachedIdx, s3Key, address
     .insert(messageData)
     .run(pluginObj.rethinkDBConnection)
   } catch (err) {
-    plugin.logerror('======save Email To RethinkDB=====')
-    plugin.logerror(util.inspect(err))
-  } finally {
-
+    pluginObj.logerror('======save Email To RethinkDB=====')
+    pluginObj.logerror(util.inspect(err))
   }
-
 }
 
 function saveEmailToElasticSearch(emailTrans, pluginObj, attachedIdx) {
