@@ -5,7 +5,7 @@
 	  "secure": true
 	},
   	"auth": {
-    "user": "obsoftcare@gmail.com",
-    "pass": "Welcome123@"
+    "user": "dummy@gmail.com",
+    "pass": "dummypassword"
   	}
 }

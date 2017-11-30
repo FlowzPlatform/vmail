@@ -10,8 +10,8 @@
     "db": "virtualEMail",
     "servers": [
       {
-        "host": "139.59.35.45",
-        "port": "28016"
+        "host": "localhost",
+        "port": "28015"
       }
     ]
   }

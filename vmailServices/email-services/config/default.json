@@ -1,8 +1,8 @@
 {
-  "rhost": "139.59.35.45",
-  "rport": "28016",
+  "rhost": "localhost",
+  "rport": "28015",
   "rdb": "virtualEMail",
   "senecaUrl": "http://localhost:4000",
-  "privateKey": "abcdefgabcdefg",
+  "privateKey": "etyetrytuye",
   "awsRegion": "usa"
 }
