@@ -10,7 +10,24 @@ var builder = icalToolkit.createIcsFileBuilder()
 var seneca = Seneca()
 let expObj = Express()
 expObj.use(cors())
+
 let smtpSettings = require('config')
+
+if(process.env.smtpHost){
+  smtpSettings.connection.host = process.env.smtphost
+}
+if(process.env.smtpPort){
+  smtpSettings.connection.port = process.env.smtpPort
+}
+if(process.env.user){
+  smtpSettings.auth.user = process.env.user
+}
+if(process.env.password){
+  smtpSettings.auth.pass = process.env.password
+}
+
+
+
 
 var Routes = [{
   prefix: '/email',
