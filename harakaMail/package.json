@@ -5,6 +5,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "aws-sdk": "^2.65.0",
+    "python-shell": "^0.4.0",
     "rethinkdb": "^2.3.3",
     "stream": "0.0.2",
     "util": "^0.10.3"

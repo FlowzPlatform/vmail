@@ -13,6 +13,21 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | setuser root bash -
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y -q install nodejs && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+RUN add-apt-repository ppa:jonathonf/python-3.6
+RUN apt-get update
+RUN apt-get install -y python3.6
+RUN apt-get install -y python-pip
+RUN apt-get install -y python3-pip
+RUN python -m pip install --upgrade pip
+RUN pip install numpy
+RUN pip3 install --upgrade pip
+RUN apt-get install -y python3-numpy python3-scipy
+# RUN apt-get install -y python-talon
+# RUN apt-get install -y python3-talon
+RUN pip3 install talon
+
+RUN which python3
+
 # Install Haraka
 RUN npm install -g Haraka
 RUN haraka -i /usr/local/haraka
