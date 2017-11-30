@@ -21,6 +21,13 @@ exports.register = async function() {
     config.aws.accessKeyId = process.env['AWS_AKEY']
   if (process.env['AWS_SKEY'] != '')
     config.aws.secretAccessKey = process.env['AWS_SKEY']
+  if (process.env['AWS_S3Bucket'] != '')
+    config.aws.s3Bucket = process.env['AWS_S3Bucket']
+
+  if (process.env['rdbhost'] != '')
+    config.rethinkDb.host = process.env['rdbhost']
+  if (process.env['rdbport'] != '')
+    config.rethinkDb.port = process.env['rdbport']
 
   AWS.config.update({
     accessKeyId: config.aws.accessKeyId,
