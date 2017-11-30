@@ -12,8 +12,8 @@
       <ul class="subject-nav nav">
         <li class="subject-brand" :id="'emailSubject'+key" v-for="(emailSubject,key) in $store.state.subjects" v-bind:class="{ unreadAlert : emailSubject.unread }"> 
           <a v-on:click="getEmailConversion(key,emailSubject.messageId)" class="row">
-          	<span class="subDiv col-md-8" :title="emailSubject.subject">{{emailSubject.subject}}</span>
-          	<span class="subjectDate col-md-4">{{emailSubject.created | dateFormat(dateType,dateFormat) }}</span>
+          	<span class="subDiv col-xs-8" :title="emailSubject.subject">{{emailSubject.subject}}</span>
+          	<span class="subjectDate col-xs-4" :title="emailSubject.created | dateFormat(dateType,dateFormat)">{{ emailSubject.created | dateFormat(dateType,dateFormat) }}</span>
           </a>
         </li>
       </ul>

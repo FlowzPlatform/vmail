@@ -257,7 +257,8 @@
         <img src="http://mangalayatan.in/wp-content/uploads/2016/01/member1.jpg" :title="conversation.data.from"/>
 	      
 	      <div>
-	      	<p v-html="conversation.data.body.html" v-on:click="openEmailDetail(conversation.s3Key)" class="emailText"></p>
+	      	<p v-if="conversation.data.body.html != ''" v-html="conversation.data.body.html" v-on:click="openEmailDetail(conversation.s3Key)" class="emailText"></p>
+          <p v-if="conversation.data.body.html == ''" v-on:click="openEmailDetail(conversation.s3Key)" class="emailText">{{ conversation.data.body.text }}</p>
           <span class="receivedDate">
             <span>{{ conversation.created | dateFormat(dateType,dateFormat) }}</span>
             <span v-if="conversation.data.cc.length>0" v-for="cc in conversation.data.cc">
