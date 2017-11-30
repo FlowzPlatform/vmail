@@ -1,5 +1,5 @@
 <template>
-  <div class="container settingContainer">
+  <div class="container settingContainer" v-bind:class="{activeToggle:!$store.state.sidebarOpen}">
   <button class="btn btn-default backBtn" v-on:click="backToMailDetail">Back</button>
   <div class="panel-group" id="accordion">
     <div class="panel panel-default">
@@ -263,5 +263,10 @@ a:focus, a:hover{
 }
 .panel-default>.panel-heading+.panel-collapse>.panel-body{
   min-height: 200px;
+}
+.activeToggle{
+  margin-left: 2%;
+  width: 96%;
+  height: 100%;
 }
 </style>

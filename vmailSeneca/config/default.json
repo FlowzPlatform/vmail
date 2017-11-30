@@ -5,7 +5,7 @@
 	  "secure": true
 	},
   	"auth": {
-    "user": "abc@gmail.com",
-    "pass": "abc@"
+    "user": "dummy@gmail.com",
+    "pass": "dummypassword"
   	}
 }

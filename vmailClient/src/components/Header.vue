@@ -4,7 +4,7 @@
 			<div class="navbar-header">
 				<img src="../assets/image/Flowz-logo.png" class="logo">
 			</div>
-			<div>
+			<div class="rightMenu">
 				<ul class="nav navbar-nav navbar-right">
 					<li>
 						<img src="http://mangalayatan.in/wp-content/uploads/2016/01/member1.jpg" v-if="this.$store.state.userDetails.image_url==undefined"></img>
@@ -86,7 +86,10 @@ export default {
   left:0;
   background-color: #2b3643;
   width:100%;
-  height: auto;
+  min-height: 40px;
+}
+.navbar-nav{
+  margin: -0.5px -15px;
 }
 .menu .navbar-nav > .active > a{
   background-color : #04A3ED;
@@ -101,7 +104,7 @@ export default {
   display: inline-block;
   font-size: 15px;
   color: #c6cfda;
-  padding: 10px 10px;
+  padding: 8px 10px;
   font-weight: normal;
 }
 .menu .navbar-nav >li>a:hover{
@@ -117,4 +120,13 @@ export default {
   color: white;
   font-size: 25px;
 }
+.container-fluid>.navbar-collapse, .container-fluid>.navbar-header, .container>.navbar-collapse, .container>.navbar-header{
+  display: inline-block;
+  float: left;
+}
+.rightMenu{
+  display: inline-block;
+  float: right;
+}
+
 </style>

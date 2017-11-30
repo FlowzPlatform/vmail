@@ -34,11 +34,12 @@
   line-height: 20px;
   right: 7px;
   top: 10px;
+  font-size: 9px;
 }
 .btn{
   padding: 0px;
   margin-top: 0px;
-  position: relative;
+  position: fixed;
   margin-left: -25px;
   color: #fff;
 }
@@ -86,6 +87,7 @@
   display: block;
   text-decoration: none;
   padding-left: 0px;
+  padding-right: 44px;
 }
 .sidebar-nav li:hover{
   background-color: #2c3542;

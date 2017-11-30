@@ -28,9 +28,15 @@
 	padding:4px 10px;
 }
 #successMsg{
-	color:#fff;
-	background-color:#36c6d3;
-	padding:4px 10px;
+  color: #9df23a;
+  background-color: #00000070;
+  padding: 4px 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 .col-md-12{
 	width: 98%;
@@ -45,7 +51,7 @@
 .composeView{
 	margin-left: 22%;
 	width: 76%;
-	height: 100%;
+	/*height: 100%;*/
 }
 .composeActiveToggle{
 	margin-left: 2%;

@@ -88,6 +88,9 @@ var moment = require('moment')
 }
 .emailDetail .body {
   padding: 20px 30px;
+  position: relative;
+  height: 450px;
+  overflow-y: auto;
 }
 .avatar{
   height: 50px;
