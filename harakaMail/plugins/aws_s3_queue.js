@@ -9,6 +9,7 @@ let AWS = require('aws-sdk'),
     async = require('async'),
     stream = require('stream'),
     Transform = require('stream').Transform
+// var socket = require('socket.io-client')('http://127.0.0.1:6000/', {reconnect: true})
 
 let enviroment = 'prod'
 if (process.env['NODE_ENV'] == 'dev')
@@ -59,25 +60,32 @@ exports.register = async function() {
 exports.hook_queue = async function (next, connection) {
   let plugin = this
   let transaction = connection.transaction
+  plugin.logerror("===Email queue start===")
+  plugin.logerror("===Email subject==="+String(transaction.header.headers.subject).replace("[ '", '').replace("' ]", '').trim())
+
   let orignalMessageStream = transaction.message_stream
   // let emailTo = transaction.rcpt_to
   let attachedIdx = JSON.stringify(transaction.header.headers).indexOf('multipart/mixed')
-
+  plugin.logerror("===parseEmail start===")
   let parseMailObject = await parseEmail(plugin, transaction.message_stream)
                                     .catch((err) => {
                                       plugin.logerror('======Parse mail cache 1=====')
                                       plugin.logerror(err)
                                     })
+  plugin.logerror("===parseEmail end===")
   // plugin.logerror("========================display Parse mail start==========================")
   // plugin.logerror(transaction.message_stream)
   // plugin.logerror("========================display Parse mail end==========================")
   if (plugin.vmail.removeThreadedDuplicateBodyContent) {
+    plugin.logerror("===filterReplyMails start===")
     parseMailObject = await filterReplyMails(plugin, parseMailObject)
                                         .catch((err) => {
                                           plugin.logerror('======filter Reply Mails=====')
                                           plugin.logerror(err)
                                         })
+    plugin.logerror("===filterReplyMails end===")
   }
+
   let onlyReplyMessage = {
     html: (parseMailObject.html) ? parseMailObject.html : '',
     textAsHtml: (transaction.message_stream.textAsHtml) ? parseMailObject.textAsHtml : '',
@@ -110,19 +118,21 @@ exports.hook_queue = async function (next, connection) {
     Key: s3key,
     Body: body
   }
-
+  plugin.logerror("===S3 upload start===")
   s3.upload(params).on('httpUploadProgress', function(evt) {}).send(function(err, data) {
+    plugin.logerror("===S3 upload end===")
     if(err) {
       plugin.logerror('======S3 upload error=====')
       plugin.logerror(util.inspect(err))
       next()
     } else {
+      plugin.logerror("===Email RethinkDb Save start===")
       emailsSaveToDB (addresses, transaction, plugin, attachedIdx, s3key)
-      .then(result =>{ next(OK, 'Email Accepted.')})
+      .then(result =>{next(OK, 'Email Accepted.'); plugin.logerror("===Email RethinkDb Save end===")})
       .catch(err =>{ plugin.logerror('======S3 upload====='); plugin.logerror(util.inspect(err)); next()})
     }
-
   })
+  plugin.logerror("===Email queue end===")
 }
 
 exports.shutdown = function() {
@@ -359,13 +369,14 @@ function saveSubjects (subObj, pluginObj, emailTos) {
           if (err) {
             throw err
           }
-          pluginObj.logerror('=======================Result Len=====================',result.length)
+          // pluginObj.logerror('=======================Result Len=====================',result.length)
           if(result.length < 1) {
             let subject = {
               'emailId' : emailTos,
               'messageId' : subObj.header.headers['message-id'][0].replace(/\n/g, ''),
               'subject' : String(subObj.header.headers.subject).replace("[ '", '').replace("' ]", '').trim(),
               'created' : rethink.ISO8601(new Date().toISOString()),
+              'modified' : rethink.ISO8601(new Date().toISOString()),
               'unread' : true
             }
             rethink.db(pluginObj.rethinkDBConfig.db)
@@ -376,7 +387,7 @@ function saveSubjects (subObj, pluginObj, emailTos) {
             rethink.db(pluginObj.rethinkDBConfig.db)
             .table(pluginObj.rethinkDBConfig.tblEmailSubjects)
             .filter(rethink.row('messageId').eq(result[0]['messageId']))
-            .update({'unread': true}).run(pluginObj.rethinkDBConnection)
+            .update({'unread': true,'modified':rethink.ISO8601(new Date().toISOString())}).run(pluginObj.rethinkDBConnection)
           }
         })
       })
@@ -386,6 +397,7 @@ function saveSubjects (subObj, pluginObj, emailTos) {
       'messageId' : subObj.header.headers['message-id'][0].replace(/\n/g, ''),
       'subject' : String(subObj.header.headers.subject).replace("[ '", '').replace("' ]", '').trim(),
       'created' : rethink.ISO8601(new Date().toISOString()),
+      'modified' : rethink.ISO8601(new Date().toISOString()),
       'unread' : true,
     }
     rethink.db(pluginObj.rethinkDBConfig.db)
