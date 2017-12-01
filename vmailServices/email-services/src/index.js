@@ -215,6 +215,106 @@ function updateEmails(mid,sid) {
   .run(rethinkConnection)
 }
 
+/*------------------------------------------------ SEND EMAIL ---------------------------------------------*/
+async function sendEmailFun(req){
+  req = await json(req)
+  let inReplyTo = ''
+  let references = []
+  if(req.to!='' && req.to!=undefined){
+    //---------------------- set reply to email-id
+    req['replyTo'] = req.from
+
+    req['calEvent'] = false
+    if(req.cc == undefined)
+      req['cc'] = []
+    if(req.bcc == undefined)
+      req['bcc'] = []
+    if(req.subject == undefined)
+      req['subject'] = 'untitled subject'
+    if(req.body == undefined)
+      req['body'] = 'null body'
+
+
+    if(!Array.isArray(req.to)){
+      req.to = req.to.split(',')
+    }
+    if(!Array.isArray(req.cc)){
+      req.cc = req.cc.split(',')
+    }
+    if(!Array.isArray(req.bcc)){
+      req.bcc = req.bcc.split(',')
+    }
+    
+
+    //---------------------- set inReplyTo and references of parent email
+    if (req.parentId != '' && req.parentId != undefined) {
+      //----------------------  save email-ids
+      saveEmailIds(req.from)
+      let parentEmailData = await getParentEmailData(req.parentId);
+      req['inReplyTo'] = parentEmailData.headers.messageId
+      if (parentEmailData.headers.references == undefined) {
+        req.references = []
+        req.references.push(parentEmailData.headers.messageId)
+      } else {
+        req.references = parentEmailData.headers.references.concat(parentEmailData.headers.messageId)
+      }
+      inReplyTo = req.inReplyTo
+      references = req.references
+    }
+    //---------------------- send email using seneca service
+    let response = {
+      method: 'POST',
+      url: senecaUrl+'/email/send',
+      json: true,
+      body: req
+    }
+    //----------------------  get response of seneca service
+    const emailSendResponse = await rp(response);
+    //----------------------  save email subjects
+    if (req.parentId == '' || req.parentId == undefined) {
+      saveSubjects({'from':req.from,'messageId':emailSendResponse.response.messageId,'subject':req.subject})
+    }
+    //----------------------  save calendar events
+    if(req.icalStartDate!='' && req.icalStartDate!=undefined && req.icalStartDate!='Invalid date'
+      && req.icalStartTime!='' && req.icalStartTime!=undefined && req.icalStartTime!='Invalid time'){
+      saveCalendarEvents(req)
+      req.calEvent = true
+    }
+    //----------------------  insert email data
+    let rcpTo = req.to.concat(req.cc).concat(req.bcc)
+    if(!Array.isArray(rcpTo)){
+      rcpTo = new Array(rcpTo)
+    }
+    await rethinkDBObj.table('emails')
+    .insert({
+      'created' : rethinkDBObj.ISO8601(new Date().toISOString()),
+      // 'attachment' : false,
+      'received' : false,
+      // 'read': true,
+      'calEvent' : req.calEvent,
+      'data' : {
+        'from' : req.from,
+        'to' : req.to,
+        'cc' : req.cc,
+        'subject' : req.subject,
+        'body' : req.body
+      },
+      'headers' : {
+        'messageId' : emailSendResponse.response.messageId,
+        'inReplyTo' : inReplyTo,
+        'references' : references
+      },
+      'rcpTo' : rcpTo
+    })
+    .run(rethinkConnection)
+
+    return {'success':'email sent successfully'}
+  }
+  else{
+    return {'error':'Atleast one recipient is required.'}
+  }
+}
+
 /*---------------------------------------------- EMAIL GROUP SERVICE ---------------------------------------*/
 const emailGroups = cors(jwtAuth(privateKey)(async(req, res) => {
   await rethinkDBObj.db('virtualEMail').table('emailIds')
@@ -262,86 +362,8 @@ const emailConversation = cors(jwtAuth(privateKey)(async(req, res) => {
 
 /*---------------------------------------------- SEND EMAIL SERVICE ---------------------------------------*/
 const sendEmail = cors(jwtAuth(privateKey)(async(req, res) => {
-  req = await json(req)
-  let inReplyTo = ''
-  let references = []
-  if(req.to!='' && req.to!=undefined){
-    //---------------------- set reply to email-id
-    req['replyTo'] = req.from
-
-    req['calEvent'] = false
-    if(req.cc == undefined)
-      req['cc'] = []
-    if(req.bcc == undefined)
-      req['bcc'] = []
-    if(req.subject == undefined)
-      req['subject'] = 'untitled subject'
-    if(req.body == undefined)
-      req['body'] = 'null body'
-
-    //---------------------- set inReplyTo and references of parent email
-    if (req.parentId != '' && req.parentId != undefined) {
-      //----------------------  save email-ids
-      saveEmailIds(req.from)
-      let parentEmailData = await getParentEmailData(req.parentId);
-      req['inReplyTo'] = parentEmailData.headers.messageId
-      if (parentEmailData.headers.references == undefined) {
-        req.references = []
-        req.references.push(parentEmailData.headers.messageId)
-      } else {
-        req.references = parentEmailData.headers.references.concat(parentEmailData.headers.messageId)
-      }
-      inReplyTo = req.inReplyTo
-      references = req.references
-    }
-    //---------------------- send email using seneca service
-    let response = {
-      method: 'POST',
-      url: senecaUrl+'/email/send',
-      json: true,
-      body: req
-    }
-    //----------------------  get response of seneca service
-    const emailSendResponse = await rp(response);
-    //----------------------  save email subjects
-    if (req.parentId == '' || req.parentId == undefined) {
-      saveSubjects({'from':req.from,'messageId':emailSendResponse.response.messageId,'subject':req.subject})
-    }
-    //----------------------  save calendar events
-    if(req.icalStartDate!='' && req.icalStartDate!=undefined && req.icalStartDate!='Invalid date'
-      && req.icalStartTime!='' && req.icalStartTime!=undefined && req.icalStartTime!='Invalid time'){
-      saveCalendarEvents(req)
-      req.calEvent = true
-    }
-    //----------------------  insert email data
-    let rcpTo = req.to.concat(req.cc).concat(req.bcc)
-    await rethinkDBObj.table('emails')
-    .insert({
-      'created' : rethinkDBObj.ISO8601(new Date().toISOString()),
-      // 'attachment' : false,
-      'received' : false,
-      // 'read': true,
-      'calEvent' : req.calEvent,
-      'data' : {
-        'from' : req.from,
-        'to' : req.to,
-        'cc' : req.cc,
-        'subject' : req.subject,
-        'body' : req.body
-      },
-      'headers' : {
-        'messageId' : emailSendResponse.response.messageId,
-        'inReplyTo' : inReplyTo,
-        'references' : references
-      },
-      'rcpTo' : rcpTo
-    })
-    .run(rethinkConnection)
-    send(res, 200, {'success':'email sent successfully'})
-  }
-  else{
-    send(res, 200, {'error':'Atleast one recipient is required.'})
-  }
+  let resp = await sendEmailFun(req);
+  send(res, 200, resp)
 }))
 
 /*---------------------------------------------- REQ ICAL EVENS SERVICE ------------------------------------*/
@@ -444,86 +466,8 @@ const getTheme = cors(jwtAuth(privateKey)(async(req, res) => {
 
 /*---------------------------------------------- SEND PASSWORD SERVICE ---------------------------------------*/
 const sendPassword = cors((async(req, res) => {
-  req = await json(req)
-  let inReplyTo = ''
-  let references = []
-  if(req.to!='' && req.to!=undefined){
-    //---------------------- set reply to email-id
-    req['replyTo'] = req.from
-
-    req['calEvent'] = false
-    if(req.cc == undefined)
-      req['cc'] = []
-    if(req.bcc == undefined)
-      req['bcc'] = []
-    if(req.subject == undefined)
-      req['subject'] = 'untitled subject'
-    if(req.body == undefined)
-      req['body'] = 'null body'
-    
-    //---------------------- set inReplyTo and references of parent email
-    if (req.parentId != '' && req.parentId != undefined) {
-      //----------------------  save email-ids
-      saveEmailIds(req.from)
-      let parentEmailData = await getParentEmailData(req.parentId);
-      req['inReplyTo'] = parentEmailData.headers.messageId
-      if (parentEmailData.headers.references == undefined) {
-        req.references = []
-        req.references.push(parentEmailData.headers.messageId)
-      } else {
-        req.references = parentEmailData.headers.references.concat(parentEmailData.headers.messageId)
-      }
-      inReplyTo = req.inReplyTo
-      references = req.references
-    }
-    //---------------------- send email using seneca service
-    let response = {
-      method: 'POST',
-      url: senecaUrl+'/email/send',
-      json: true,
-      body: req
-    }
-    //----------------------  get response of seneca service
-    const emailSendResponse = await rp(response);
-    //----------------------  save email subjects
-    if (req.parentId == '' || req.parentId == undefined){
-      saveSubjects({'from':req.from,'messageId':emailSendResponse.response.messageId,'subject':req.subject})
-    }
-    //----------------------  save calendar events
-    if(req.icalStartDate!='' && req.icalStartDate!=undefined && req.icalStartDate!='Invalid date'
-      && req.icalStartTime!='' && req.icalStartTime!=undefined && req.icalStartTime!='Invalid time'){
-      saveCalendarEvents(req)
-      req.calEvent = true
-    }
-    //----------------------  insert email data
-    let rcpTo = req.to.concat(req.cc).concat(req.bcc)
-    await rethinkDBObj.table('emails')
-    .insert({ 
-      'created' : rethinkDBObj.ISO8601(new Date().toISOString()),
-      // 'attachment' : false, 
-      'received' : false,
-      // 'read': true,
-      'calEvent' : req.calEvent,
-      'data' : {
-        'from' : req.from,
-        'to' : req.to,
-        'cc' : req.cc,
-        'subject' : req.subject,
-        'body' : req.body
-      },
-      'headers' : {
-        'messageId' : emailSendResponse.response.messageId,
-        'inReplyTo' : inReplyTo,
-        'references' : references
-      },
-      'rcpTo' : rcpTo
-    })
-    .run(rethinkConnection)
-    send(res, 200, {'success':'email sent successfully'})
-  }
-  else{
-    send(res, 200, {'error':'Atleast one recipient is required.'})
-  }
+  let resp = await sendEmailFun(req);
+  send(res, 200, resp)
 }))
 
 

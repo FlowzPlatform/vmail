@@ -168,19 +168,20 @@ export default {
         url: process.env.serviceUrl+'/saveMjml',
         data: myData,
         headers: {
-          'authorization': localStorage.getItem("token")
+          'authorization': this.$cookie.get('auth_token') 
         }
       })
       .then(response => {
-        let self =this
+        let self = this
         self.successMsg = true
         setTimeout(function(option) {
           self.successMsg = false
         }, 3000)
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          self.$cookie.delete('auth_token', {domain: location})
           self.$store.state.loginToken = null
         }
       })
@@ -198,15 +199,16 @@ export default {
         method: 'get',
         url: process.env.serviceUrl+'/mjmlList',
         headers: {
-          'authorization': localStorage.getItem("token")
+          'authorization': this.$cookie.get('auth_token')
         }
       })
       .then(response => {
         this.listing = response.data
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          self.$cookie.delete('auth_token', {domain: location})
           self.$store.state.loginToken = null
         }
       })
@@ -219,15 +221,16 @@ export default {
         method: 'get',
         url: process.env.serviceUrl+'/getTheme/'+id,
         headers: {
-          'authorization': localStorage.getItem("token")
+          'authorization': this.$cookie.get('auth_token')
         }
       })
       .then(response => {
         this.selectedTheme = response.data[0]
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          self.$cookie.delete('auth_token', {domain: location});
           self.$store.state.loginToken = null
         }
       })

@@ -6,10 +6,13 @@ import VModal from 'vue-js-modal'
 import iView from 'iview'
 import enLocale from 'iview/src/locale/lang/en-US'
 import 'iview/dist/styles/iview.css'
+var VueCookie = require('vue-cookie')
 
 Vue.use(VModal, { dialog: true })
 Vue.use(iView,{enLocale})
 Vue.config.productionTip = false
+Vue.use(VueCookie)
+
 
 /* eslint-disable no-new */
 new Vue({

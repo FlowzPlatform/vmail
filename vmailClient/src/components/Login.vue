@@ -23,6 +23,14 @@
           </div>
         </div>
       </div>
+
+      <form id="form-facebook" name="form-facebook" :action=loginWithFacebookUrl method="post">
+        <input type="hidden" name="success_url" :value=callbackUrl>
+      </form>
+
+      <form id="form-google" name="form-google" :action = loginWithGoogleUrl method="post">
+        <input type="hidden" name="success_url" :value=callbackUrl>
+      </form>
       
       <div class="frontbox">
         <div class="login">
@@ -33,7 +41,22 @@
           </div>
           <p v-on:click="forgetPassword">FORGOT PASSWORD ?</p>
           <button v-on:click="login">LOG IN</button>
+          <div class="social">
+            <span v-on:click="facebookLogin">
+              <i class="fa fa-facebook-square fa-2x" aria-hidden="true"></i>
+            </span>
+            <span v-on:click="googleLogin">
+              <i class="fa fa-google-plus-square fa-2x" aria-hidden="true"></i>
+            </span>
+            <span v-on:click="twitterLogin">
+              <i class="fa fa-twitter-square fa-2x" aria-hidden="true"></i>
+            </span>
+            <span v-on:click="githubLogin">
+              <i class="fa fa-github-square fa-2x" aria-hidden="true"></i>
+            </span>
+          </div>
         </div>
+
         <div class="signup hide">
           <h2>SIGN UP</h2>
           <div class="inputbox">
@@ -53,6 +76,7 @@
   import Vue from 'vue';
   import $ from 'jquery';
   import axios from 'axios'
+  import psl from 'psl'
 
   export default {
     name: 'login',
@@ -63,10 +87,27 @@
         password:'',
         username:'',
         signupemail:'',
-        signuppassword:''
+        signuppassword:'',
+        callbackUrl : process.env.callbackUrl,
+        loginWithFacebookUrl : process.env.loginWithFacebookUrl,
+        loginWithGoogleUrl : process.env.loginWithGoogleUrl
       }
     },
     methods:{
+      facebookLogin(){
+        console.log("calling")
+        $("#form-facebook").submit() 
+      },
+      googleLogin(){
+        console.log("calling")
+        $("#form-google").submit();
+      },
+      twitterLogin(){
+        console.log("calling")
+      },
+      githubLogin(){
+        console.log("calling")
+      },
       login:function(){
         let self = this
         let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -90,8 +131,10 @@
             }
           })
           .then(response => {
-            localStorage.setItem("token", response.data.logintoken)
-            this.$store.state.loginToken = localStorage.getItem("token")
+            let location = psl.parse(window.location.hostname)
+            location = location.domain === null ? location.input : location.domain
+            self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+            self.$store.state.loginToken = self.$cookie.get('auth_token')
           })
           .catch(function(e) {
             if(e.response.data === 'That user does not exist'){
@@ -170,3 +213,17 @@
     }
   }
 </script>
+
+
+<style scoped>
+  .social {
+    position: relative;
+    margin-top: 10px;
+  }
+  .social span {
+    margin-right: 5px;
+  }
+  .social span:hover {
+    cursor: pointer;
+  }
+</style>

@@ -50,16 +50,17 @@ var moment = require('moment')
           method: 'get',
           url: process.env.serviceUrl+'/requestIcalEvents?start='+start+'&end='+end+'&email='+this.$store.state.selectedEmailId,
           headers: {
-            'authorization' : localStorage.getItem("token")
+            'authorization' : this.$cookie.get('auth_token')
           }
         })
         .then(async response => {
           this.events = response.data
         })
         .catch(function(e){
+          let self = this
           if(e.response.status === 401){
-            localStorage.removeItem("token")
-            this.$store.state.loginToken = null
+            self.$cookie.delete('auth_token', {domain: location});
+            self.$store.state.loginToken = null
           }
         })
       },

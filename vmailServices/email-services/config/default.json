@@ -4,5 +4,5 @@
   "rdb": "virtualEMail",
   "senecaUrl": "http://localhost:4000",
   "privateKey": "etyetrytuye",
-  "awsRegion": "usa"
+  "awsRegion": "us-west-2"
 }

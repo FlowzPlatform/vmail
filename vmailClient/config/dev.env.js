@@ -8,5 +8,8 @@ module.exports = merge(prodEnv, {
   authUrl: JSON.stringify(process.env.userLogin) || JSON.stringify('http://ec2-54-88-11-110.compute-1.amazonaws.com/api'),
   userUpdate: JSON.stringify(process.env.userUpdate) || JSON.stringify('http://162.242.223.167:3004/updateuserdetails/'),
   secretkey: JSON.stringify(process.env.secretkey),
-  accesskey: JSON.stringify(process.env.accesskey)
+  accesskey: JSON.stringify(process.env.accesskey),
+  loginWithGoogleUrl: JSON.stringify(process.env.loginWithGoogleUrl) || JSON.stringify("http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/Gplus"),
+  loginWithFacebookUrl: JSON.stringify(process.env.loginWithFacebookUrl) || JSON.stringify("http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook"),
+  callbackUrl: JSON.stringify(process.env.callbackUrl) || JSON.stringify("http://vmail.flowz.com")
 })
