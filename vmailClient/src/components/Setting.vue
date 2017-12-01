@@ -155,7 +155,7 @@ import axios from 'axios'
           method: 'put',
           url: process.env.userUpdate+this.$store.state.userDetails._id,
           headers: {
-            'authorization': localStorage.getItem("token")
+            'authorization': this.$cookie.get('auth_token')
           },
           data:{
             fullname: this.fullname
@@ -167,7 +167,7 @@ import axios from 'axios'
               method: 'post',
               url: process.env.authUrl+'/userdetails',
               headers: {
-                'authorization': localStorage.getItem("token")
+                'authorization': this.$cookie.get('auth_token')
               }
             })
             .then(response => {
@@ -189,7 +189,7 @@ import axios from 'axios'
               method: 'put',
               url: process.env.userUpdate+self.$store.state.userDetails._id,
               headers: {
-                'Authorization': localStorage.getItem("token")
+                'Authorization': this.$cookie.get('auth_token')
               },
               data:{
                 image_url: data.Location,
@@ -202,7 +202,7 @@ import axios from 'axios'
                   method: 'post',
                   url: process.env.authUrl+'/userdetails',
                   headers: {
-                    'authorization': localStorage.getItem("token")
+                    'authorization': this.$cookie.get('auth_token')
                   }
                 })
                 .then(response => {

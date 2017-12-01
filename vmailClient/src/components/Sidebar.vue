@@ -188,7 +188,7 @@ const app = feathers().configure(socketio(io(baseUrl)))
           method: 'get',
           url: process.env.serviceUrl+'/emailGroups',
           headers: {
-            'authorization': localStorage.getItem("token")
+            'authorization': this.$cookie.get('auth_token')
           }
         })
         .then(async response => {
@@ -201,8 +201,9 @@ const app = feathers().configure(socketio(io(baseUrl)))
           }
         })
         .catch(function(e){
+          let self = this
           if(e.response.status === 401){
-            localStorage.removeItem("token")
+            self.$cookie.delete('auth_token', {domain: location})
             self.$store.state.loginToken = null
           }
         })

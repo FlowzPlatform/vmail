@@ -31,6 +31,7 @@
 
 <script>
 import axios from 'axios'
+import psl from 'psl'
 
 export default {
   name: 'header',
@@ -41,9 +42,9 @@ export default {
   },
   methods:{
   	logout: function() {
-      localStorage.removeItem("token")
-      localStorage.clear()
-      location.reload()
+      let location = psl.parse(window.location.hostname)
+      location = location.domain === null ? location.input : location.domain
+      this.$cookie.delete('auth_token', {domain: location})
     },
     openSetting(){
     	this.$store.state.replyDetails.to = []
@@ -64,7 +65,7 @@ export default {
       method: 'post',
       url: process.env.authUrl+'/userdetails',
       headers: {
-        'authorization': localStorage.getItem("token")
+        'authorization': this.$cookie.get('auth_token')
       }
     })
     .then(response => {

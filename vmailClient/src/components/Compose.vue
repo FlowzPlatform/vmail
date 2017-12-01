@@ -83,7 +83,10 @@
 </style>
 
 <style type="text/css">
-	.ql-container.ql-snow {height: 150px !important;}
+	.ql-container.ql-snow {
+		height: 150px !important;
+		overflow: auto;
+	}
 </style>
 
 
@@ -226,14 +229,13 @@ import { mjml2html } from 'mjml'
 	        }
 
 	        myData = JSON.stringify(myData)
-	        let self = this
 	        self.successMsg = 'Email is sending ...'
 	        axios({
 	          method: 'post',
 	          url: process.env.serviceUrl+'/sendEmail',
 	          data: myData,
 	          headers: {
-	            'authorization': localStorage.getItem("token")
+	            'authorization': this.$cookie.get('auth_token')
 	          }
 	        })
 	        .then(response => {
@@ -264,8 +266,9 @@ import { mjml2html } from 'mjml'
 	          }
 	        })
 	        .catch(function(e){
+	        	let self = this
 	          if(e.response.status === 401){
-	            localStorage.removeItem("token")
+	            self.$cookie.delete('auth_token', {domain: location})
 	            self.$store.state.loginToken = null
 	          }
 	        })

@@ -3,12 +3,14 @@ import Vuex from 'vuex'
 import axios from 'axios'
 let Promise = require('promise')
 const simpleParser = require('mailparser').simpleParser;
+var VueCookie = require('vue-cookie')
 
+Vue.use(VueCookie)
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    loginToken:localStorage.getItem("token"),
+    loginToken: VueCookie.get('auth_token'),
     calenderOpen:false,
     sidebarOpen:true,
     composeOpen:false,
@@ -38,15 +40,16 @@ export const store = new Vuex.Store({
         method: 'get',
         url: process.env.serviceUrl+'/emailSubjects?eid='+emailId,
         headers: {
-          'authorization' : localStorage.getItem("token")
+          'authorization' :  VueCookie.get('auth_token')
         }
       })
       .then(response => {
         state.subjects = response.data
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          VueCookie.delete('auth_token', {domain: location})
           state.loginToken = null
         }
       })
@@ -57,15 +60,16 @@ export const store = new Vuex.Store({
         method: 'get',
         url: process.env.serviceUrl+'/emailConversation?mid='+mid+'&sid='+state.selectedEmailId,
         headers: {
-          'authorization' : localStorage.getItem("token")
+          'authorization' :  VueCookie.get('auth_token')
         }
       })
       .then(async response => {
         state.conversations = response.data
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          VueCookie.delete('auth_token', {domain: location})
           state.loginToken = null
         }
       })
@@ -76,7 +80,7 @@ export const store = new Vuex.Store({
         method: 'get',
         url: process.env.serviceUrl+'/emailDetail?s3Key='+s3Key,
         headers: {
-          'authorization' : localStorage.getItem("token")
+          'authorization' :  VueCookie.get('auth_token')
         }
       })
       .then(async response => {
@@ -84,8 +88,9 @@ export const store = new Vuex.Store({
         state.emailDetail = response.data
       })
       .catch(function(e){
+        let self = this
         if(e.response.status === 401){
-          localStorage.removeItem("token")
+          VueCookie.delete('auth_token', {domain: location})
           state.loginToken = null
         }
       })
