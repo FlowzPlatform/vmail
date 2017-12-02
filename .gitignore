@@ -11,6 +11,7 @@ vmailClient/dist/
 vmailClient/npm-debug.log*
 vmailClient/yarn-debug.log*
 vmailClient/yarn-error.log*
+vmailClient/package-lock.json 
 
 vmailServer/node_modules/
 vmailServer/rethinkdb_data/
