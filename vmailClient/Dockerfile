@@ -26,8 +26,9 @@ ADD . /opt/app
 RUN npm install
 
 #build application
-ENV microUrl="http://localhost:3035"
-ENV serverBaseUrl="http://localhost:3037"
+ENV microUrl="http://api.flowz.com/vmailmicro"
+ENV serverBaseUrl="http://api.flowz.com/vservice/"
+ENV userUpdate="http://api.flowz.com/user"
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
 #RUN cp /opt/app/.htaccess /var/www/html/

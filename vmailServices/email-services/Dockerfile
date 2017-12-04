@@ -7,4 +7,4 @@ RUN npm install
 CMD npm start
 
 # Ports
-EXPOSE 3000
+EXPOSE 3003

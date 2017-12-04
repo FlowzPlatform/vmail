@@ -1,0 +1,52 @@
+sudo: required
+
+language: node
+
+services:
+  - docker
+
+branches:
+  only:
+  - master
+
+jobs:
+  include:
+    - stage: Mail-Seneca-Flowz
+      script:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t mail_seneca_flowz:"$DOCKER_IMAGE_TAG" ./vmailSeneca/
+      - docker images
+      - docker tag mail_seneca_flowz:dev $DOCKER_USERNAME/mail_seneca_flowz:"$DOCKER_IMAGE_TAG"
+      - docker push $DOCKER_USERNAME/mail_seneca_flowz:"$DOCKER_IMAGE_TAG"
+    - stage: Mail-Email-Services-Flowz
+      script:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t mail_email_services_flowz:"$DOCKER_IMAGE_TAG" ./vmailServices/email-services/
+      - docker images
+      - docker tag mail_email_services_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_email_services_flowz:"$DOCKER_IMAGE_TAG"
+      - docker push $DOCKER_USERNAME/mail_email_services_flowz:"$DOCKER_IMAGE_TAG"
+    - stage: Mail-Backend-Flowz
+      script:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t mail_backend_flowz:"$DOCKER_IMAGE_TAG" ./vmailServer/
+      - docker images
+      - docker tag mail_backend_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_backend_flowz:"$DOCKER_IMAGE_TAG"
+      - docker push $DOCKER_USERNAME/mail_backend_flowz:"$DOCKER_IMAGE_TAG"
+    - stage: Mail-Frontend-Flowz
+      script:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t mail_frontend_flowz:"$DOCKER_IMAGE_TAG" ./vmailClient/
+      - docker images
+      - docker tag mail_frontend_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_frontend_flowz:"$DOCKER_IMAGE_TAG"
+      - docker push $DOCKER_USERNAME/mail_frontend_flowz:"$DOCKER_IMAGE_TAG"
+    - stage: Upgrade Rancher Service
+      script:
+      - bash ./upgrade.sh
+    - stage: Finish Rancher Service
+      script:
+      - bash ./finish.sh
+
+
+
+
+ 

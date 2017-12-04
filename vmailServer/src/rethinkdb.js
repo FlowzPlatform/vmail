@@ -1,13 +1,19 @@
 const rethinkdbdash = require('rethinkdbdash');
+let fs = require('fs')
 
 module.exports = function () {
   const app = this;
+  let ssl = process.env.cert ? { ca: fs.readFileSync(__dirname+process.env.cert) } : null
+  let rauth = process.env.rauth ? process.env.rauth : null
+
   let aconfig = {
     "db": process.env.rdb,
     "servers": [
       {
         "host": process.env.rhost,
-        "port": process.env.rport
+        "port": process.env.rport,
+        "authKey": rauth,
+        "ssl": ssl
       }
     ]
   }
@@ -17,6 +23,7 @@ module.exports = function () {
     config = aconfig;
   else
     config = app.get('rethinkdb');
+
   const r = rethinkdbdash(config);
   const oldSetup = app.setup;
 
