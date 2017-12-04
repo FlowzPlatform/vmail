@@ -42,9 +42,10 @@ export default {
   },
   methods:{
   	logout: function() {
-      let location = psl.parse(window.location.hostname)
-      location = location.domain === null ? location.input : location.domain
-      this.$cookie.delete('auth_token', {domain: location})
+      let locat = psl.parse(window.location.hostname)
+      locat = locat.domain === null ? locat.input : locat.domain
+      this.$cookie.delete('auth_token', {domain: locat})
+      location.reload()
     },
     openSetting(){
     	this.$store.state.replyDetails.to = []

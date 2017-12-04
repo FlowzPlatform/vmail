@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "src/index.js",
   "scripts": {
-    "start": "micro",
+    "start": "micro -p 3003",
     "lint": "xo",
     "test": "npm run lint && ava"
   },

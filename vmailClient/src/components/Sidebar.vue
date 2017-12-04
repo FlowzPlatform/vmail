@@ -128,8 +128,12 @@ import axios from 'axios'
 import feathers from 'feathers/client';
 import socketio from 'feathers-socketio/client';
 import io from 'socket.io-client';
+
 let baseUrl = process.env.serverUrl;
-const app = feathers().configure(socketio(io(baseUrl)))
+const socket = io(baseUrl, {
+  path: '/vservice'
+});
+const app = feathers().configure(socketio(socket))
 
   export default {
     name: 'sidebar',

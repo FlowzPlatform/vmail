@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 3030,
+  "port": 3036,
   "public": "../public/",
   "paginate": {
     "default": 10,
@@ -11,7 +11,9 @@
     "servers": [
       {
         "host": "localhost",
-        "port": "28015"
+        "port": "28015",
+        "authKey": null,
+        "ssl": null
       }
     ]
   }

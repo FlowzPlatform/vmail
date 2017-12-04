@@ -2,6 +2,9 @@
   "rhost": "localhost",
   "rport": "28015",
   "rdb": "virtualEMail",
+  "ruser": "username",
+  "rauth": null,
+  "rpassword": "1sf21sf58",
   "senecaUrl": "http://localhost:4000",
   "privateKey": "etyetrytuye",
   "awsRegion": "us-west-2"

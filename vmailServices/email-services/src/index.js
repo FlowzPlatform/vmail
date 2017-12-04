@@ -27,9 +27,10 @@ let env_awsprivatekey = process.env.awsprivatekey
 let env_rhost = process.env.rhost
 let env_rport = process.env.rport
 let env_rdb = process.env.rdb
+let env_rauth = process.env.rauth
 let env_senecaUrl = process.env.senecaurl
 let env_privateKey = process.env.privatekey
-let rhost,rport,rdb,senecaUrl,privateKey
+let rhost,rport,rdb,senecaUrl,privateKey,rauth
 
 /*------------------------------------------------ RETHINK SETTINGS ------------------------------------------*/
 if(process.env.rhost)
@@ -44,6 +45,11 @@ if(process.env.rdb)
   rdb = env_rdb
 else
   rdb = config.rdb
+if(process.env.rauth)
+  rauth = env_rauth
+else
+  rauth = config.rauth
+
 
 /*------------------------------------------------ SENECA SETTINGS ------------------------------------------*/
 if(process.env.senecaurl)
@@ -67,11 +73,18 @@ AWS.config.update({
 var s3 = new AWS.S3();
 
 /*------------------------------------------------ RETHINK CONNECTION --------------------------------------*/
-let rethinkConnection = null
-rethinkDBObj.connect({ host:rhost, port:rport, db:rdb }, function(err, conn) {
-  if (err) throw err
+let rethinkConnection = null  
+let ssl = process.env.cert ? { ca: fs.readFileSync(__dirname+process.env.cert) } : null
+rethinkDBObj.connect({ 
+    host:rhost, 
+    port:rport, 
+    db:rdb,
+    authKey: rauth,
+    ssl: ssl
+  }, function(err, conn) {
   rethinkConnection = conn
 })
+
 
 /*------------------------------------------------ DATE FORMAT FUNCTION -------------------------------------*/
 function getDateFormat(date) {
@@ -317,7 +330,7 @@ async function sendEmailFun(req){
 
 /*---------------------------------------------- EMAIL GROUP SERVICE ---------------------------------------*/
 const emailGroups = cors(jwtAuth(privateKey)(async(req, res) => {
-  await rethinkDBObj.db('virtualEMail').table('emailIds')
+  await rethinkDBObj.db(rdb).table('emailIds')
   .orderBy(rethinkDBObj.asc('created'))
   .run(rethinkConnection, function(err, cursor) {
     cursor.toArray(function(err, result) {
