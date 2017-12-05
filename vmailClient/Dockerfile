@@ -16,6 +16,15 @@ RUN curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install --yes nodejs
 RUN apt-get install --yes build-essential
 
+# Install ssl certificate
+RUN apt-get update
+RUN apt-get install software-properties-common
+RUN add-apt-repository ppa:certbot/certbot
+RUN apt-get update
+RUN apt-get install python-certbot-apache
+
+RUN certbot --apache
+
 #create directory html
 #RUN mkdir /var/www/html/dist
 RUN mkdir -p /opt/app
