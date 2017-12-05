@@ -7,9 +7,9 @@ RUN apt-get update \
 		git \
 	&& rm -r /var/lib/apt/lists/*
 
-RUN echo "" > /var/www/html/index.html
-RUN git clone https://github.com/letsencrypt/letsencrypt
-RUN /data/letsencrypt/letsencrypt-auto --help
+#RUN echo "" > /var/www/html/index.html
+#RUN git clone https://github.com/letsencrypt/letsencrypt
+#RUN /data/letsencrypt/letsencrypt-auto --help
 
 # Default command
 CMD ["apachectl", "-D", "FOREGROUND"]
