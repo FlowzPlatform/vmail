@@ -1,9 +1,10 @@
-FROM ubuntu:16.04
+FROM whiledo/letsencrypt-apache-ubuntu
 
 # install dependencies
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		apache2 \
+		git \
 	&& rm -r /var/lib/apt/lists/*
 
 RUN echo "" > /var/www/html/index.html
@@ -41,4 +42,4 @@ RUN rm -rf /opt/app/*
 RUN a2enmod rewrite
 RUN service apache2 restart
 
-EXPOSE 80 443	
+EXPOSE 80 443
