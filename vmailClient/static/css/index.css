@@ -92,3 +92,9 @@
     margin: 0px !important;
   }
 }
+.chat .message div p table{
+  width: 100%;
+}
+.message .emailText img{
+  max-width: 100%;
+}

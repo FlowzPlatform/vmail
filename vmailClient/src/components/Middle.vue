@@ -37,7 +37,7 @@ import conversation from './Conversation.vue'
 
 <style scoped>
 	#subjectlist{
-		height: 90vh;
+		height: 92vh;
 	}
 	.activeToggle .row .col-md-8{
 	  left: 31%;
@@ -68,14 +68,14 @@ import conversation from './Conversation.vue'
 		margin-left: 2%;
 		width: 66%;
 		border: 1px solid #e7ecf1;
-    
     position: fixed;
     left: 45%;
     width: 52%;
-    height: 90vh;
+    height: 92vh;
     overflow: auto;
 	}
 	.middleView{
+		margin-top: 20px;
 		margin-left: 22%;
 		width: 76%;
 		height: 100%;

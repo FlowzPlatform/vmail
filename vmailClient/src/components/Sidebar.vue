@@ -6,7 +6,7 @@
           <li class="sidebar-brand" :id="'emailGroup'+key" v-for="(emailData,key) in emailGroups"> 
             <a v-on:click="getEmailSubjects(key,emailData.emailid)">
               {{emailData.emailid}}
-              <span class="btn__badge">{{emailData.unreadCount}}/{{emailData.totalCount}}</span>
+              <span class="btn__badge" :title="'unread-mail:- '+emailData.unreadCount+'   total-mail:- '+emailData.totalCount">{{emailData.unreadCount}}/{{emailData.totalCount}}</span>
             </a>
           </li>
         </ul>
