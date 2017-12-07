@@ -11,7 +11,7 @@ curl -u ""$RANCHER_USER":"$RANCHER_PASS"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:obdev/mail_email_services_flowz:dev","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3003:3003/tcp"],"version": "0d2790b4-9eed-459c-aefe-bf520bdf8e94","environment": {"rdb": "virtualEMail","rhost": "aws-us-east-1-portal.30.dblayer.com","rport": "16868","rauth":"51b2885598be1c2c1243a5c9c3548ad2","cert":"/cacert","senecaurl": "api.flowz.com/sendmail","privatekey": "abcdefgabcdefg"}}},"toServiceStrategy":null}' \
+  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:obdev/mail_email_services_flowz:dev","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3003:3003/tcp"],"version": "0d2790b4-9eed-459c-aefe-bf520bdf8e94","environment": {"rdb": "virtualEMail","rhost": "aws-us-east-1-portal.30.dblayer.com","rport": "16868","rauth":"51b2885598be1c2c1243a5c9c3548ad2","cert":"/cacert","senecaurl": "api.flowz.com/sendmail","privatekey": "abcdefgabcdefg","awsaccesskey":"'"$AWSACCESSKEY"'","awsprivatekey":"'"$AWSPRIVATEKEY"'"}}},"toServiceStrategy":null}' \
 'http://rancher.flowz.com:8080/v2-beta/projects/1a29/services/1s288?action=upgrade'
 
 curl -u ""$RANCHER_USER":"$RANCHER_PASS"" \

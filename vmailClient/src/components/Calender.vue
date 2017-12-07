@@ -4,6 +4,7 @@
 .calendarContainer{
   width: 78%;
   margin-left: 21%;
+  margin-top: 20px;
 }
 .calendarMiddle{
   border: 1px solid #dddddd;

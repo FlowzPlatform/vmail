@@ -14,6 +14,8 @@
   border-bottom: 1px solid #dddddd;
   padding: 10px 15px;
   width: 100%;
+  font-size: 15px;
+  color: #a9a9a9;
 }
 .subjectContent:focus{
 	outline: none;
@@ -39,6 +41,7 @@
   z-index: 1;
 }
 .col-md-12{
+	margin-top: 20px;
 	width: 98%;
 	padding: 20px;
 	margin-left: 1%;
@@ -46,7 +49,8 @@
 	background-color: #ffffff;
 }
 .composeBtn{
-	border-radius: 0px;
+	border-radius: 5px;
+	margin-left: 5px;
 }
 .composeView{
 	margin-left: 22%;
@@ -59,10 +63,10 @@
 	height: 100%;
 }
 .tags-input{
-	padding: 4px;
-	font-size: 15px;
-	box-shadow: none;
-	border-bottom: 1px solid #cccccc;
+	padding: 4px !important;
+	font-size: 15px !important;
+	box-shadow: none !important;
+	border-bottom: 1px solid #cccccc !important;
 }
 .ql-toolbar.ql-snow{
 	border: none !important;
@@ -98,23 +102,25 @@
 					<p id="errMsg" v-if="errMsg!=''">{{errMsg}}</p>
 					<p id="successMsg" v-if="successMsg!=''">{{successMsg}}</p>
 				</div>
-				<p class="addCcBcc" title="add cc and bcc" v-on:click="addCcBcc" v-if="!this.showCcBcc">Cc/Bcc</p>
+				<p class="addCcBcc" title="add cc and bcc" v-on:click="addCcBcc">Cc/Bcc</p>
 				<InputTag placeholder="To" :tags='tos' @tags-change="addtos"></InputTag>
 				<InputTag placeholder="Cc" :tags='ccs' @tags-change="addccs" v-if="this.showCcBcc"></InputTag>
 				<InputTag placeholder="Bcc" :tags='bccs' @tags-change="addbccs" v-if="this.showCcBcc"></InputTag>
 				<input type='text' class="subjectContent" placeholder="Subject" v-model='subject' />
 				<VueEditor v-model='content'></VueEditor>
 				<div v-html='mjml' v-if="this.$store.state.mjmlTheme != ''" class="contentArea"></div>
-				<div v-if="this.ical" style="padding-top: 5px;padding-bottom: 5px;">
+				<div v-if="this.ical" style="padding-top: 5px;padding-bottom: 5px;display: flex;">
 					<DatePicker type="date" placeholder="Choose date" v-model="icalDate"></DatePicker>
           <TimePicker format="HH:mm" placeholder="Choose time" v-model="icalTime"></TimePicker>
           <Input v-model="icalSummary" placeholder="Summary" style="display: inline-block;width: 54%;"></Input>
       		<Button type="info" v-on:click="this.icalEventCancel">Cancel</Button>
 				</div>
-				<button type="button" class="btn btn-success composeBtn" v-on:click="sendEmail">Send</button>
-				<button type="button" class="btn btn-primary composeBtn" v-on:click="icalEvent">Calender Invite</button>
-				<button type="button" class="btn btn-primary composeBtn" v-on:click="mjmlEvent">Templates</button>
-				<button type="button" class="btn btn-danger composeBtn" v-on:click="discard">Discard</button>
+				<div style="display: flex;">
+					<button type="button" class="btn btn-success composeBtn" v-on:click="sendEmail">Send</button>
+					<button type="button" class="btn btn-primary composeBtn" v-on:click="icalEvent">Calender Invite</button>
+					<button type="button" class="btn btn-primary composeBtn" v-on:click="mjmlEvent">Templates</button>
+					<button type="button" class="btn btn-danger composeBtn" v-on:click="discard">Discard</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -199,7 +205,7 @@ import { mjml2html } from 'mjml'
     		this.$store.state.mjmlOpen = false
     	},
     	addCcBcc(){
-    		this.showCcBcc = true
+    		this.showCcBcc = !this.showCcBcc
     	},
     	sendEmail: function() {
 	      if(this.tos.length>0){

@@ -33,7 +33,7 @@
       </form>
       
       <div class="frontbox">
-        <div class="login">
+        <div class="login" v-if="!ldapShow">
           <h2>LOG IN</h2>
           <div class="inputbox">
             <input type="email" v-model="email" placeholder="Email Id">
@@ -53,6 +53,23 @@
             </span>
             <span v-on:click="githubLogin">
               <i class="fa fa-github-square fa-2x" aria-hidden="true"></i>
+            </span>
+            <span v-on:click="ldapShow = !ldapShow" style="font-size: 20px">
+              LDAP
+            </span>
+          </div>
+        </div>
+
+        <div class="login" v-if="ldapShow">
+          <h2>LDAP LOGIN</h2>
+          <div class="inputbox">
+            <input type="email" v-model="email" placeholder="Email Id">
+            <input type="password" v-model="password" placeholder="Password" v-on:keydown.enter.prevent.stop="login">
+          </div>
+          <button v-on:click="ldapLogin">LOG IN</button>
+          <div class="social">
+            <span v-on:click="ldapShow = !ldapShow" style="font-size: 20px">
+              back to login
             </span>
           </div>
         </div>
@@ -82,6 +99,7 @@
     name: 'login',
     data() {
       return {
+        ldapShow:false,
         errmsg:'',
         email:'',
         password:'',
@@ -94,6 +112,42 @@
       }
     },
     methods:{
+      ldapLogin(){
+        let self = this
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if(this.email=='' || this.password==''){
+          self.errmsg = 'All fields are required..!'
+          setTimeout(function() {self.errmsg = ''}, 3000)
+        }
+        else if(!re.test(this.email)){
+          self.errmsg = 'Email Id is not valid..!'
+          setTimeout(function() {self.errmsg = ''}, 3000)
+        }
+        else{
+          let self=this
+          axios({
+            method: 'post',
+            url: process.env.authUrl+'/ldapauth',
+            data: {
+              email: this.email,
+              password: this.password
+            }
+          })
+          .then(response => {
+            let location = psl.parse(window.location.hostname)
+            location = location.domain === null ? location.input : location.domain
+            self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+            self.$store.state.loginToken = self.$cookie.get('auth_token')
+          })
+          .catch(function(e) {
+            self.errmsg = e.response.data.message
+            setTimeout(function(option) {
+              self.errmsg = ''
+            },3000)
+          })
+        }
+      },
       facebookLogin(){
         console.log("calling")
         $("#form-facebook").submit() 
