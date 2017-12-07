@@ -14,6 +14,8 @@
   border-bottom: 1px solid #dddddd;
   padding: 10px 15px;
   width: 100%;
+  font-size: 15px;
+  color: #a9a9a9;
 }
 .subjectContent:focus{
 	outline: none;
@@ -48,6 +50,7 @@
 }
 .composeBtn{
 	border-radius: 5px;
+	margin-left: 5px;
 }
 .composeView{
 	margin-left: 22%;
