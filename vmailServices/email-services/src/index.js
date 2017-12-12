@@ -298,6 +298,7 @@ async function sendEmailFun(req){
     if(!Array.isArray(rcpTo)){
       rcpTo = new Array(rcpTo)
     }
+    console.log(req)
     await rethinkDBObj.table('emails')
     .insert({
       'created' : rethinkDBObj.ISO8601(new Date().toISOString()),

@@ -5,6 +5,9 @@
     </div>
     <div v-if="emailDetail">
       <div v-if="emailDetail.received">
+        <span style="float: right;padding: 5px;" v-on:click="$modal.hide('dialog')" class="closeModal">
+          <i class="fa fa-times fa-2x"></i>
+        </span>
   	    <h2>
   	    	<span class="icon icon-star-large"></span>
   	    	{{emailDetail.subject}}
@@ -96,5 +99,8 @@ var moment = require('moment')
   height: 50px;
   width: 50px;
   border-radius: 50%;
+}
+.closeModal:hover{
+  cursor: pointer;
 }
 </style>

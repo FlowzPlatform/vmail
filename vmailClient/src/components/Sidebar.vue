@@ -130,9 +130,13 @@ import socketio from 'feathers-socketio/client';
 import io from 'socket.io-client';
 
 let baseUrl = process.env.serverUrl;
-const socket = io(baseUrl, {
-  path: '/vservice'
-});
+
+// const socket = io(baseUrl, {
+//   path: '/vservice/socket.io'
+// });
+
+const socket = io(baseUrl);
+
 const app = feathers().configure(socketio(socket))
 
   export default {

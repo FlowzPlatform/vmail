@@ -24,7 +24,8 @@ export const store = new Vuex.Store({
       cc: [],
       subject: '',
       from: '',
-      parentId: ''
+      parentId: '',
+      content: ''
     },
     subjects:[],
     conversations:[],

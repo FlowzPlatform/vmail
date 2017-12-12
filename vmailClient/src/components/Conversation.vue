@@ -327,12 +327,22 @@ import _ from 'lodash'
         this.$store.state.replyDetails.from = this.$store.state.selectedEmailId
         this.$store.state.replyDetails.cc = conversations[arrKey].data.cc
         this.$store.state.replyDetails.subject = conversations[arrKey].data.subject
-        this.$store.state.replyDetails.parentId = conversations[arrKey].id  
-        if((conversations[arrKey]).received)
+        this.$store.state.replyDetails.parentId = conversations[arrKey].id
+
+        if((conversations[arrKey]).received){
           this.$store.state.replyDetails.to.push(conversations[arrKey].data.from)
-        else
+          if(conversations[arrKey].data.body.html == ''){
+            this.$store.state.replyDetails.content = conversations[arrKey].data.body.text
+          }
+          else{
+            this.$store.state.replyDetails.content = conversations[arrKey].data.body.html 
+          }
+        }
+        else{
           this.$store.state.replyDetails.to = conversations[arrKey].data.to
-        
+          this.$store.state.replyDetails.content = conversations[arrKey].data.body
+        }
+
         $('#conversation').animate({scrollTop: $('#conversation').outerHeight()})
       },
       openEmailDetail(s3Key) {
