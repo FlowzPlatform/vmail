@@ -25,11 +25,11 @@
       </div>
 
       <form id="form-facebook" name="form-facebook" :action=loginWithFacebookUrl method="post">
-        <input type="hidden" name="success_url" :value=callbackUrl>
+        <input type="hidden" :value=callbackUrl>
       </form>
 
       <form id="form-google" name="form-google" :action = loginWithGoogleUrl method="post">
-        <input type="hidden" name="success_url" :value=callbackUrl>
+        <input type="hidden" :value=callbackUrl>
       </form>
       
       <div class="frontbox">
