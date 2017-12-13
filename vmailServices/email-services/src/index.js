@@ -298,6 +298,10 @@ async function sendEmailFun(req){
     if(!Array.isArray(rcpTo)){
       rcpTo = new Array(rcpTo)
     }
+    console.log(req)
+    let replyPosition = req.body.indexOf("----- Original Message -----")
+    let finalBody = req.body.substring(0, replyPosition)
+
     await rethinkDBObj.table('emails')
     .insert({
       'created' : rethinkDBObj.ISO8601(new Date().toISOString()),
@@ -310,7 +314,7 @@ async function sendEmailFun(req){
         'to' : req.to,
         'cc' : req.cc,
         'subject' : req.subject,
-        'body' : req.body
+        'body' : finalBody
       },
       'headers' : {
         'messageId' : emailSendResponse.response.messageId,

@@ -30,7 +30,7 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "compression": "^1.6.2",
-    "cors": "^2.8.3",
+    "cors": "^2.8.4",
     "feathers": "^2.1.4",
     "feathers-configuration": "^0.4.1",
     "feathers-errors": "^2.8.2",

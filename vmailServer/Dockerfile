@@ -6,6 +6,6 @@ WORKDIR /usr/src/app/server
 RUN npm install
 
 
-EXPOSE 3036
+EXPOSE 3036 4036
 
 CMD  npm start

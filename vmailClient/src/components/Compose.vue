@@ -117,7 +117,7 @@
 				</div>
 				<div style="display: flex;">
 					<button type="button" class="btn btn-success composeBtn" v-on:click="sendEmail">Send</button>
-					<button type="button" class="btn btn-primary composeBtn" v-on:click="icalEvent">Calender Invite</button>
+					<button type="button" class="btn btn-primary composeBtn" v-on:click="icalEvent" v-if="!ical">Calender Invite</button>
 					<button type="button" class="btn btn-primary composeBtn" v-on:click="mjmlEvent">Templates</button>
 					<button type="button" class="btn btn-danger composeBtn" v-on:click="discard">Discard</button>
 				</div>
@@ -196,6 +196,7 @@ import { mjml2html } from 'mjml'
         this.$store.state.replyDetails.from = ''
         this.$store.state.replyDetails.parentId = ''
         this.$store.state.replyDetails.subject = ''
+        this.$store.state.replyDetails.content = ''
         this.$store.state.mjmlTheme = ''
         this.$store.state.mjmlTheme = ''
     		this.$store.state.composeOpen = false
@@ -226,7 +227,7 @@ import { mjml2html } from 'mjml'
 	          "bcc": bcc,
 	          "from": from,
 	          "subject": this.subject,
-	          "body": body,
+	          "body": body+'<br><p>----- Original Message -----</p><br><p>From: '+to.toString()+'</p><p>To: '+from+'</p><p>'+cc.toString()+'</p><p>Subject: '+this.subject+'</p>'+this.$store.state.replyDetails.content,
 	          "replyTo": from,
 	          "parentId": this.$store.state.replyDetails.parentId,
 	          "icalStartTime": moment(this.icalTime).format('HH:mm:ss'),
@@ -257,6 +258,7 @@ import { mjml2html } from 'mjml'
 			        self.$store.state.replyDetails.from = ''
 			        self.$store.state.replyDetails.parentId = ''
 			        self.$store.state.replyDetails.subject = ''
+			        self.$store.state.replyDetails.content = ''
 			        self.$store.state.mjmlTheme = ''
 			        self.icalTime = ''
 			        self.icalDate = ''
@@ -302,6 +304,7 @@ import { mjml2html } from 'mjml'
 	      this.$store.state.replyDetails.from = ''
 	      this.$store.state.replyDetails.parentId = ''
 	      this.$store.state.replyDetails.subject = ''
+	      self.$store.state.replyDetails.content = ''
 	      this.$store.state.mjmlTheme = ''
 	  		this.$store.state.composeOpen = false
 	  		this.$store.state.settingOpen = false
