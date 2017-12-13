@@ -131,11 +131,11 @@ import io from 'socket.io-client';
 
 let baseUrl = process.env.socketUrl;
 
-// const socket = io(baseUrl, {
-//   path: '/vservice/socket.io'
-// });
+const socket = io(baseUrl, {
+  path: '/vservice/'
+});
 
-const socket = io(baseUrl);
+// const socket = io(baseUrl);
 
 const app = feathers().configure(socketio(socket))
 
