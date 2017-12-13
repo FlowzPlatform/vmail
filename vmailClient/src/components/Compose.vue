@@ -227,7 +227,7 @@ import { mjml2html } from 'mjml'
 	          "bcc": bcc,
 	          "from": from,
 	          "subject": this.subject,
-	          "body": body+'<br><b>reply content</b><br>'+this.$store.state.replyDetails.content,
+	          "body": body+'<br><p>----- Original Message -----</p><br><p>From: '+to.toString()+'</p><p>To: '+from+'</p><p>'+cc.toString()+'</p><p>Subject: '+this.subject+'</p>'+this.$store.state.replyDetails.content,
 	          "replyTo": from,
 	          "parentId": this.$store.state.replyDetails.parentId,
 	          "icalStartTime": moment(this.icalTime).format('HH:mm:ss'),
@@ -235,7 +235,6 @@ import { mjml2html } from 'mjml'
 	          "icalSummary": this.icalSummary
 	        }
 
-	        console.log(myData)
 	        myData = JSON.stringify(myData)
 	        self.successMsg = 'Email is sending ...'
 	        axios({

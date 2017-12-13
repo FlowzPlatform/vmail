@@ -129,7 +129,7 @@ import feathers from 'feathers/client';
 import socketio from 'feathers-socketio/client';
 import io from 'socket.io-client';
 
-let baseUrl = process.env.serverUrl;
+let baseUrl = process.env.socketUrl;
 
 // const socket = io(baseUrl, {
 //   path: '/vservice/socket.io'
