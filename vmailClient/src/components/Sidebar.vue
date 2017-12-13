@@ -132,7 +132,7 @@ import io from 'socket.io-client';
 let baseUrl = process.env.socketUrl;
 
 const socket = io(baseUrl, {
-  path: '/vservice/socket.io'
+  path: '/vservice/'
 });
 
 // const socket = io(baseUrl);
