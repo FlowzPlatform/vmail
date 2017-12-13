@@ -2,6 +2,7 @@ module.exports = {
   NODE_ENV: JSON.stringify('production'),
   serviceUrl: JSON.stringify(process.env.microUrl) || JSON.stringify('http://localhost:3003'),
   serverUrl: JSON.stringify(process.env.serverBaseUrl) || JSON.stringify('http://localhost:3036/'),
+  socketUrl: JSON.stringify(process.env.socketUrl) || JSON.stringify('http://localhost:4036/'),
   authUrl: JSON.stringify(process.env.userLogin) || JSON.stringify('http://auth.flowz.com/api'),
   userUpdate: JSON.stringify(process.env.userUpdate) || JSON.stringify('http://162.242.223.167:3004/updateuserdetails/'),
   secretkey: JSON.stringify(process.env.secretkey),

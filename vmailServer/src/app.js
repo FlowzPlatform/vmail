@@ -38,7 +38,7 @@ app.use('/', feathers.static(app.get('public')));
 app.configure(hooks());
 app.configure(rethinkdb);
 app.configure(rest());
-app.configure(socketio(3039,{
+app.configure(socketio(4036,{
   wsEngine: 'uws',
   origin: '*.flowz.com:*'
 }));
