@@ -33,6 +33,7 @@ RUN npm install
 #build application
 ENV microUrl="http://api.flowz.com/vmailmicro"
 ENV serverBaseUrl="http://api.flowz.com/vservice/"
+ENV socketUrl="http://ws.flowz.com/vservice/"
 ENV userUpdate="http://api.flowz.com/user"
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
