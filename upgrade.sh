@@ -19,7 +19,7 @@ curl -u ""$RANCHER_USER":"$RANCHER_PASS"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:obdev/mail_backend_flowz:dev","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3036:3036/tcp"],"version": "2ec02051-52c4-4518-890c-7af5712dd2e5","environment": {"rdb": "virtualEMail","rhost": "aws-us-east-1-portal.30.dblayer.com","rport": "16868","rauth":"51b2885598be1c2c1243a5c9c3548ad2","cert":"/cacert"}}},"toServiceStrategy":null}' \
+  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:obdev/mail_backend_flowz:dev","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3036:3036/tcp","4036:4036/tcp"],"version": "2ec02051-52c4-4518-890c-7af5712dd2e5","environment": {"rdb": "virtualEMail","rhost": "aws-us-east-1-portal.30.dblayer.com","rport": "16868","rauth":"51b2885598be1c2c1243a5c9c3548ad2","cert":"/cacert"}}},"toServiceStrategy":null}' \
 'http://rancher.flowz.com:8080/v2-beta/projects/1a29/services/1s281?action=upgrade'
 
 
