@@ -62,13 +62,28 @@
       </v-layout>
     </template>
 
-    <v-dialog v-model="dialog" max-width="1000px" lazy v-if="detailEmail!=null">
-      <v-card>
+    <v-dialog v-model="dialog" max-width="80%" lazy v-if="detailEmail!=null">
+      <v-card style="background-color: #eff4f5;color: #34495e;">
         <v-card-title>
-
+          <v-layout align-center row spacer slot="header">
+            <v-flex xs1>
+              <v-avatar size="36px" slot="activator">
+                <img src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460">
+              </v-avatar>
+            </v-flex>
+            <v-flex xs3>
+              <v-list-tile-content>{{ detailEmail.from.text }}</v-list-tile-content>
+              <v-list-tile-sub-title>{{ detailEmail.date | moment("from", "now") }}</v-list-tile-sub-title>
+            </v-flex>
+          </v-layout>
         </v-card-title>
+
+        <v-spacer></v-spacer>
+
+        <v-card-text v-html="detailEmail.html"></v-card-text>
+        
         <v-card-actions>
-          <v-btn color="primary" flat @click.stop="dialog=false">Close</v-btn>
+          <v-btn color="primary" @click="closeModal">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -147,8 +162,11 @@
       'kcomposeview': Composeview
     },
     methods:{
+      closeModal(){
+        this.detailEmail = null
+        this.dialog = false
+      },
       async emailDetail(key){
-        console.log(key)
         this.dialog = true
         let emailDetail = await microservices.emailDetail(key)
         
@@ -157,6 +175,7 @@
         }
         else{
           this.detailEmail = emailDetail.data
+          console.log(this.detailEmail)
         }
       },
       openReply(){
