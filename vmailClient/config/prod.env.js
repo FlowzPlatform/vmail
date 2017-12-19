@@ -1,13 +1,11 @@
+'use strict'
 module.exports = {
-  NODE_ENV: JSON.stringify('production'),
-  serviceUrl: JSON.stringify(process.env.microUrl) || JSON.stringify('http://localhost:3003'),
-  serverUrl: JSON.stringify(process.env.serverBaseUrl) || JSON.stringify('http://localhost:3036/'),
-  socketUrl: JSON.stringify(process.env.socketUrl) || JSON.stringify('http://localhost:4036/'),
-  authUrl: JSON.stringify(process.env.userLogin) || JSON.stringify('http://auth.flowz.com/api'),
-  userUpdate: JSON.stringify(process.env.userUpdate) || JSON.stringify('http://162.242.223.167:3004/updateuserdetails/'),
-  secretkey: JSON.stringify(process.env.secretkey),
-  accesskey: JSON.stringify(process.env.accesskey),
-  loginWithGoogleUrl: JSON.stringify(process.env.loginWithGoogleUrl) || JSON.stringify("http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/Gplus"),
-  loginWithFacebookUrl: JSON.stringify(process.env.loginWithFacebookUrl) || JSON.stringify("http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook"),
-  callbackUrl: JSON.stringify(process.env.callbackUrl) || JSON.stringify("http://vmail.flowz.com")
+  NODE_ENV: '"production"',
+  loginURL: JSON.stringify(process.env.loginURL) || JSON.stringify('http://auth.flowz.com/api'),
+  microURL: JSON.stringify(process.env.microUrl) || JSON.stringify('http://api.flowz.com/vmailmicro'),
+  serverURL: JSON.stringify(process.env.serverBaseUrl) || JSON.stringify('http://api.flowz.com/vservice/'),
+  socketUrl: JSON.stringify(process.env.socketUrl) || JSON.stringify('http://ws.flowz.com:4036'),
+  loginWithGoogleUrl: JSON.stringify(process.env.loginWithGoogleUrl) || JSON.stringify('http://auth.flowz.com/auth/Gplus'),
+  loginWithFacebookUrl: JSON.stringify(process.env.loginWithFacebookUrl) || JSON.stringify('http://auth.flowz.com/auth/facebook'),
+	callbackUrl: JSON.stringify(process.env.callbackUrl) || JSON.stringify('http://vmail.flowz.com')
 }

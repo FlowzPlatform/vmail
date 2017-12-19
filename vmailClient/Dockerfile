@@ -37,14 +37,12 @@ RUN npm install
 
 ARG module1=vservice
 ARG module2=vmailmicro
-ARG module3=user
 
 
 #build application
 ENV microUrl="http://api.flowz.com/$module2"
 ENV serverBaseUrl="http://api.flowz.com/$module1/"
 ENV socketUrl="http://ws.flowz.com:4036"
-ENV userUpdate="http://api.flowz.com/$module3"
 
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
@@ -53,3 +51,7 @@ RUN cp -a -f /opt/app/dist/* /var/www/html/
 RUN rm -rf /opt/app/*
 RUN a2enmod rewrite
 RUN service apache2 restart
+
+
+
+EXPOSE 80 443
