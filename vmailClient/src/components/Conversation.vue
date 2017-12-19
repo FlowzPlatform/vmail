@@ -13,9 +13,9 @@
         <v-flex xs7 sm8 md8 lg8>
           <v-list-tile @click="" class="you">
             <v-list-tile-content>
-              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html">
+              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html" @click="emailDetail(conv.s3Key)">
               </v-list-tile-title>
-              <v-list-tile-title class="message" v-if="conv.data.body.html==''">
+              <v-list-tile-title class="message" v-if="conv.data.body.html==''" @click="emailDetail(conv.s3Key)">
                 {{ conv.data.body.text }}
               </v-list-tile-title>
               <v-list-tile-sub-title class="conDate">
@@ -61,6 +61,17 @@
         </v-flex>
       </v-layout>
     </template>
+
+    <v-dialog v-model="dialog" max-width="1000px" lazy v-if="detailEmail!=null">
+      <v-card>
+        <v-card-title>
+
+        </v-card-title>
+        <v-card-actions>
+          <v-btn color="primary" flat @click.stop="dialog=false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-chip outline color="primary" id="replyButton" @click="openReply" v-if="!$store.state.showReply">reply</v-chip>
     <v-chip outline color="primary" id="replyButton" @click="cancelReply" v-if="$store.state.showReply">cancel</v-chip>
@@ -124,16 +135,30 @@
 <script>
   import Composeview from './Composeview'
   import { mapGetters } from 'vuex'
+  import microservices from '@/api/microservices'
 
   export default {
     name: 'Conversation',
     data: () => ({
-      
+      dialog : false,
+      detailEmail : null
     }),
     components: {
       'kcomposeview': Composeview
     },
     methods:{
+      async emailDetail(key){
+        console.log(key)
+        this.dialog = true
+        let emailDetail = await microservices.emailDetail(key)
+        
+        if(emailDetail === 401){
+          this.$router.push({ path: '/login' })
+        }
+        else{
+          this.detailEmail = emailDetail.data
+        }
+      },
       openReply(){
         this.$store.state.showReply = true
         let conversations = this.conversations
