@@ -1,11 +1,11 @@
 {
 	"connection":{
-	  "host": "smtp.gmail.com",
-	  "port": 465,
-	  "secure": true
+	  "host": "mail.flowz.com",
+	  "port": 587,
+	  "secure": false
 	},
   	"auth": {
-    "user": "dummy@gmail.com",
-    "pass": "dummypassword"
-  	}
+    "user": "user1",
+    "pass": "password1"
+  }
 }

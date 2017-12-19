@@ -1,82 +1,54 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import Login from '@/components/Login'
-import Main from '@/components/Main'
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header'
-import Middle from '@/components/Middle'
-import Subjectlist from '@/components/Subjectlist'
-import Conversation from '@/components/Conversation'
-import Compose from '@/components/Compose'
-import EmailDetail from '@/components/EmailDetail'
-import MjmlEditor from '@/components/MjmlEditor'
-import Setting from '@/components/Setting'
-import Calender from '@/components/Calender'
+import Layout from '@/layout/Master'
+import Mail from '@/pages/Mail'
+import Login from '@/pages/Login'
+import Compose from '@/pages/Compose'
+import SocialLogin from '@/pages/SocialLogin'
+import Calendar from '@/pages/Calendar'
+import Emailtemplate from '@/pages/Emailtemplate'
 
-Vue.use(Router)
-
-export default new Router({
-	mode:'history',
-  routes: [
-    {
-      path: '/',
-      name: 'Main',
-      component: Main
+const routes = [
+  {
+    path: '/user',
+    name: 'Layout',
+    component: Layout,
+    meta: { requiresAuth: true },
+    children: [{
+      path: 'maildashboard',
+      name: 'MailDashboard',
+      component: Mail
     },
     {
-      path: '/Login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/Sidebar',
-      name: 'Sidebar',
-      component: Sidebar
-    },
-    {
-      path: '/Header',
-      name: 'Header',
-      component: Header
-    },
-    {
-      path: '/Middle',
-      name: 'Middle',
-      component: Middle
-    },
-    {
-      path: '/Subjectlist',
-      name: 'Subjectlist',
-      component: Subjectlist
-    },
-    {
-      path: '/Conversation',
-      name: 'Conversation',
-      component: Conversation
-    },
-    {
-      path: '/Compose',
+      path: 'compose',
       name: 'Compose',
       component: Compose
     },
     {
-      path: '/EmailDetail',
-      name: 'EmailDetail',
-      component: EmailDetail
+      path: 'calendar',
+      name: 'Calendar',
+      component: Calendar
     },
     {
-      path: '/MjmlEditor',
-      name: 'MjmlEditor',
-      component: MjmlEditor
-    },
-    {
-      path: '/Setting',
-      name: 'Setting',
-      component: Setting
-    },
-    {
-      path: '/Calender',
-      name: 'Calender',
-      component: Calender
-    }
-  ]
-})
+      path: 'emailtemplate',
+      name: 'Emailtemplate',
+      component: Emailtemplate
+    }]
+  },
+  { 
+    path: '/Login',
+    name: 'Login',
+    component: Login
+  },
+  { 
+    path: '/SocialLogin',
+    name: 'SocialLogin',
+    component: SocialLogin
+  },
+  {
+    path: '/',
+    name: '',
+    redirect: '/Login'
+  }
+]
+
+export default routes
