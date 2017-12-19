@@ -13,9 +13,9 @@
         <v-flex xs7 sm8 md8 lg8>
           <v-list-tile @click="" class="you">
             <v-list-tile-content>
-              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html">
+              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html" @click="emailDetail(conv.s3Key)">
               </v-list-tile-title>
-              <v-list-tile-title class="message" v-if="conv.data.body.html==''">
+              <v-list-tile-title class="message" v-if="conv.data.body.html==''" @click="emailDetail(conv.s3Key)">
                 {{ conv.data.body.text }}
               </v-list-tile-title>
               <v-list-tile-sub-title class="conDate">
@@ -61,6 +61,32 @@
         </v-flex>
       </v-layout>
     </template>
+
+    <v-dialog v-model="dialog" max-width="80%" lazy v-if="detailEmail!=null">
+      <v-card style="background-color: #eff4f5;color: #34495e;">
+        <v-card-title>
+          <v-layout align-center row spacer slot="header">
+            <v-flex xs1>
+              <v-avatar size="36px" slot="activator">
+                <img src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460">
+              </v-avatar>
+            </v-flex>
+            <v-flex xs3>
+              <v-list-tile-content>{{ detailEmail.from.text }}</v-list-tile-content>
+              <v-list-tile-sub-title>{{ detailEmail.date | moment("from", "now") }}</v-list-tile-sub-title>
+            </v-flex>
+          </v-layout>
+        </v-card-title>
+
+        <v-spacer></v-spacer>
+
+        <v-card-text v-html="detailEmail.html"></v-card-text>
+        
+        <v-card-actions>
+          <v-btn color="primary" @click="closeModal">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-chip outline color="primary" id="replyButton" @click="openReply" v-if="!$store.state.showReply">reply</v-chip>
     <v-chip outline color="primary" id="replyButton" @click="cancelReply" v-if="$store.state.showReply">cancel</v-chip>
@@ -124,16 +150,34 @@
 <script>
   import Composeview from './Composeview'
   import { mapGetters } from 'vuex'
+  import microservices from '@/api/microservices'
 
   export default {
     name: 'Conversation',
     data: () => ({
-      
+      dialog : false,
+      detailEmail : null
     }),
     components: {
       'kcomposeview': Composeview
     },
     methods:{
+      closeModal(){
+        this.detailEmail = null
+        this.dialog = false
+      },
+      async emailDetail(key){
+        this.dialog = true
+        let emailDetail = await microservices.emailDetail(key)
+        
+        if(emailDetail === 401){
+          this.$router.push({ path: '/login' })
+        }
+        else{
+          this.detailEmail = emailDetail.data
+          console.log(this.detailEmail)
+        }
+      },
       openReply(){
         this.$store.state.showReply = true
         let conversations = this.conversations

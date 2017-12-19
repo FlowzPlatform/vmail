@@ -42,8 +42,8 @@ ENV socketUrl="http://ws.flowz.com:4036"
 
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
-#RUN cp /opt/app/.htaccess /var/www/html/
-#RUN cp /opt/app/vhost.conf /etc/apache2/sites-enabled/
+RUN cp /opt/app/.htaccess /var/www/html/
+RUN cp /opt/app/vhost.conf /etc/apache2/sites-enabled/
 RUN rm -rf /opt/app/*
 RUN a2enmod rewrite
 RUN service apache2 restart

@@ -24,5 +24,8 @@ export default {
   },
   getTheme: (id) => {
     return api.request('get', '/getTheme/'+id)
+  },
+  emailDetail: (key) => {
+    return api.request('get', '/emailDetail?s3Key='+key)
   }
 }
