@@ -1,10 +1,15 @@
-FROM ubuntu:16.04
+FROM whiledo/letsencrypt-apache-ubuntu
 
 # install dependencies
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		apache2 \
+		git \
 	&& rm -r /var/lib/apt/lists/*
+
+#RUN echo "" > /var/www/html/index.html
+#RUN git clone https://github.com/letsencrypt/letsencrypt
+#RUN /data/letsencrypt/letsencrypt-auto --help
 
 # Default command
 CMD ["apachectl", "-D", "FOREGROUND"]
@@ -15,15 +20,6 @@ RUN apt-get update \
 RUN curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install --yes nodejs
 RUN apt-get install --yes build-essential
-
-# Install ssl certificate
-RUN apt-get update
-RUN apt-get install software-properties-common
-RUN add-apt-repository ppa:certbot/certbot
-RUN apt-get update
-RUN apt-get install python-certbot-apache
-
-RUN certbot --apache
 
 #create directory html
 #RUN mkdir /var/www/html/dist
@@ -51,7 +47,5 @@ RUN cp -a -f /opt/app/dist/* /var/www/html/
 RUN rm -rf /opt/app/*
 RUN a2enmod rewrite
 RUN service apache2 restart
-
-
 
 EXPOSE 80 443
