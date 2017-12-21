@@ -36,14 +36,14 @@
       getActiveSubject(subject){
         let sId = this.$store.state.selectedEmail
         let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
-
-        if(subject.unread){
-          return subject.id === obj.subId ? 'subFocus unreadAlert' : ''
+        if(obj != undefined){
+          if(subject.unread){
+            return subject.id === obj.subId ? 'subFocus unreadAlert' : ''
+          }
+          else{
+            return subject.id === obj.subId ? 'subFocus' : ''
+          }
         }
-        else{
-          return subject.id === obj.subId ? 'subFocus' : ''
-        }
-        
       },
       composeMail () {
         this.$router.push({ path: 'Compose' })
