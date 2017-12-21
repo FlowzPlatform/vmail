@@ -30,7 +30,7 @@ export default {
   gmailLogin: (params) => {
     return axios({
       method: 'post',
-      url: process.env.loginURL + '/googleauthprocess',
+      url: process.env.loginURL + '/verifyemail',
       data: params
     }).then(response => {
       if (response) {

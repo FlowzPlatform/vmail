@@ -10,5 +10,7 @@ module.exports = merge(prodEnv, {
   socketUrl: JSON.stringify(process.env.socketUrl) || JSON.stringify('http://localhost:3036'),
   loginWithGoogleUrl: JSON.stringify(process.env.loginWithGoogleUrl) || JSON.stringify('http://auth.flowz.com/auth/Gplus'),
   loginWithFacebookUrl: JSON.stringify(process.env.loginWithFacebookUrl) || JSON.stringify('http://auth.flowz.com/auth/facebook'),
+  loginWithTwitterUrl: JSON.stringify(process.env.loginWithTwitterUrl) || JSON.stringify('http://auth.flowz.com/auth/twitter'),
+  loginWithGithubUrl: JSON.stringify(process.env.loginWithGithubUrl) || JSON.stringify('http://auth.flowz.com/auth/github'),
 	callbackUrl: JSON.stringify(process.env.callbackUrl) || JSON.stringify('http://localhost:8080')
 })

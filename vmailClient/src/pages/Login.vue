@@ -88,9 +88,9 @@
                               </v-layout>
                               <v-layout row wrap style="margin-top: 10px;">
                                 <v-flex xs12 sm8 md8>
-                                  <!-- <v-btn icon slot="activator" dark @click="tweeLogin">
+                                  <v-btn icon slot="activator" dark @click="tweeLogin">
                                     <i class="fa fa-twitter fa-2x"></i>
-                                  </v-btn> -->
+                                  </v-btn>
                                   <v-btn icon slot="activator" dark @click="gmailLogin">
                                     <i class="fa fa-google fa-2x"></i>
                                   </v-btn>
@@ -130,6 +130,13 @@
       <input type="hidden" name="success_url" :value=callbackUrl>
     </form>
 
+    <form id="form-twitter" name="form-twitter" :action=loginWithTwitterUrl method="post">
+      <input type="hidden" name="success_url" :value=callbackUrl>
+    </form>
+
+    <form id="form-github" name="form-github" :action=loginWithGithubUrl method="post">
+      <input type="hidden" name="success_url" :value=callbackUrl>
+    </form>
 
   </v-app>
 </template>
@@ -159,6 +166,8 @@
         callbackUrl : process.env.callbackUrl,
         loginWithFacebookUrl : process.env.loginWithFacebookUrl,
         loginWithGoogleUrl : process.env.loginWithGoogleUrl,
+        loginWithTwitterUrl : process.env.loginWithTwitterUrl,
+        loginWithGithubUrl : process.env.loginWithGithubUrl,
         rules: {
           required: (value) => !!value || 'Required.',
           email: (value) => {
@@ -219,10 +228,10 @@
         $("#form-google").submit();
       },
       tweeLogin(){
-        console.log('twee Login')
+        $("#form-twitter").submit();
       },
       gitLogin(){
-        console.log('git Login')
+        $("#form-github").submit();
       }
     },
     created(){

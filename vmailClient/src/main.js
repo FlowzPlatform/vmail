@@ -54,7 +54,14 @@ router.beforeEach((to, from, next) => {
         })
       })
     } else {
-      next()
+      store.dispatch('authenticate', token).then(response => {
+        store.commit('SET_USER', response)
+        next({
+          path: '/user/maildashboard'
+        })
+      }).catch(error => {
+        next()
+      })
     }
   }
 })
