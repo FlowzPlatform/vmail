@@ -46,6 +46,18 @@ jobs:
       script:
       - bash ./finish.sh
 
+notifications:
+  email:
+    recipients:
+      - arpitap@officebeacon.com
+      - kaushalm@officebrain.com
+      - anuj@officebrain.com
+      - naveeng@officebrain.com
+      - kavib@officebrain.com
+      - chirag@officebrain.com
+    on_success: always
+    on_failure: always
+
 
 
 

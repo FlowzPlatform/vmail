@@ -14,5 +14,6 @@ export default {
     content: '',
     mjmlTheme: ''
   },
-  obid: ''
+  obid: '',
+  selectedSubjects: []
 }

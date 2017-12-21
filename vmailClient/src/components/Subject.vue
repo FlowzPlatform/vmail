@@ -4,8 +4,8 @@
       <v-btn @click="composeMail" style="background-color: #e7505a;width: 44%;">Compose</v-btn>
       <v-btn color="info" @click="openCalendar" style="width: 44%;">Calendar</v-btn>
     </div>
-    <template v-for="(subject,key) in subjects">
-      <v-list-tile @click="getConversation(subject.messageId,key)" :id="'emailSubject'+key">
+    <template v-for="subject in subjects">
+      <v-list-tile @click="getConversation(subject.messageId,subject.id)" :class="getActiveSubject(subject)">
         <v-list-tile-content>
           <v-tooltip bottom>
             <v-list-tile-title class="subjtitle" slot="activator">
@@ -33,6 +33,18 @@
       subjectList : []
     }),
     methods : {
+      getActiveSubject(subject){
+        let sId = this.$store.state.selectedEmail
+        let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
+
+        if(subject.unread){
+          return subject.id === obj.subId ? 'subFocus unreadAlert' : ''
+        }
+        else{
+          return subject.id === obj.subId ? 'subFocus' : ''
+        }
+        
+      },
       composeMail () {
         this.$router.push({ path: 'Compose' })
 
@@ -59,13 +71,18 @@
         this.$store.state.replyDetails.content = ''
         this.$store.state.replyDetails.parentId = ''
       },
-      async getConversation (mId,subjectKey) {
+      async getConversation (mId,subId) {
         let sId = this.$store.state.selectedEmail
-        localStorage.setItem(sId,subjectKey)
-        $(".list__tile").removeClass("subFocus")
-        $("#emailSubject"+subjectKey).addClass("subFocus")
-        $(".list__tile").css({ cursor:"wait" })
 
+        let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
+        if(obj == undefined){
+          this.$store.state.selectedSubjects.push({'emailId':sId ,'subId':subId})
+        }
+        else{
+          obj.subId = subId 
+        }
+
+        $(".list__tile").css({ cursor:"wait" })
         //------- by default close replyModal
         this.$store.state.showReply = false
 
@@ -93,15 +110,16 @@
       })
     },
     mounted(){
-      let selEm = this.$store.state.selectedEmail
-      $(".list__tile").removeClass("subFocus")
-      $("#emailSubject"+localStorage.getItem(selEm)).addClass("subFocus")
+      
     }
   }
 </script>
 
 
 <style>
+  .unreadAlert{
+    border-left: 7px solid #03A9F4;
+  }
   #subjects{
     background-color: #ffffff;
     box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);

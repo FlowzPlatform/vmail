@@ -10,6 +10,7 @@
         <img src="../assets/Flowz-logo.png"  style="vertical-align: middle;height:30px !important">
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-toolbar-title style="font-size: 16px;">{{ $store.state.user.email }}</v-toolbar-title>
       <kheader></kheader>
     </v-toolbar>
 
