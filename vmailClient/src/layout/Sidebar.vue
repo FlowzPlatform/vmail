@@ -67,12 +67,19 @@
           this.$store.commit('SET_SUBJECTLIST', subjectList.data.reverse())
           // -------call automatic first conversation
           let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === emailId; })
-          let subObj = subjectList.data.find(function (sub) { return sub.id === obj.subId; })
-          let index = subjectList.data.indexOf(subObj)
+          if(obj != undefined){
+            let subObj = subjectList.data.find(function (sub) { return sub.id === obj.subId; })
+            let index = subjectList.data.indexOf(subObj)
 
-          let mId = subjectList.data[index].messageId
-          this.getConversation(mId)
-          
+            let mId = subjectList.data[index].messageId
+            this.getConversation(mId)
+          }
+          else{
+            console.log('in else')
+            this.$store.state.selectedSubjects.push({'emailId':emailId ,'subId':subjectList.data[0].id})
+            let mId = subjectList.data[0].messageId
+            this.getConversation(mId)
+          }
         }
       },
       async getConversation (mId) {
