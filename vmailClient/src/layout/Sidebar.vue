@@ -12,6 +12,17 @@
 
 <template>
 	<v-list two-line subheader>
+    <template>
+      <v-list-tile>
+        <v-list-tile-content>
+            <v-text-field
+              label="Search..."
+              append-icon="search"
+              v-model="searchword"
+            ></v-text-field>
+        </v-list-tile-content>
+      </v-list-tile>
+    </template>
     <template v-for="emailData in formatedEmails">
       <v-list-tile @click="subjectList(emailData.emailid)" :class="getActiveMail(emailData)">
         <v-list-tile-content>
@@ -49,7 +60,7 @@
   
   export default {
     data: () => ({
-      
+      searchword : ''
     }),
     methods : {
       getActiveMail(emailData) {
@@ -112,7 +123,11 @@
       }),
       formatedEmails(){
         let emails = this.emailList.slice()
-        return emails.reverse()
+        emails = emails.reverse()
+
+        return emails.filter((email) => {
+          return email.emailid.toLowerCase().includes(this.searchword.toLowerCase());
+        });
       }
     },
     async mounted () {
