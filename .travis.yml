@@ -14,25 +14,37 @@ jobs:
   include:
     - stage: Mail-Seneca-Flowz
       script:
-      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_seneca_flowz:$TRAVIS_BRANCH ./vmailSeneca/
-      - docker images
-      - docker tag mail_seneca_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
-      - docker push $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
+      - 'if [ ${TRAVIS_BRANCH} = "demo" ]; then
+            echo "not build mail_seneca_flowz image";
+        else
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_seneca_flowz:$TRAVIS_BRANCH ./vmailSeneca/;
+            docker images;
+            docker tag mail_seneca_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH;
+            docker push $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH;
+        fi'
     - stage: Mail-Email-Services-Flowz
       script:
-      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_email_services_flowz:$TRAVIS_BRANCH ./vmailServices/email-services/
-      - docker images
-      - docker tag mail_email_services_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH
-      - docker push $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH
+      - 'if [ ${TRAVIS_BRANCH} = "demo" ]; then
+            echo "not build mail_email_services_flowz image";
+        else
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_email_services_flowz:$TRAVIS_BRANCH ./vmailServices/email-services/;
+            docker images;
+            docker tag mail_email_services_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH;
+            docker push $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH;
+        fi'
     - stage: Mail-Backend-Flowz
       script:
-      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_backend_flowz:$TRAVIS_BRANCH ./vmailServer/
-      - docker images
-      - docker tag mail_backend_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH
-      - docker push $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH
+      - 'if [ ${TRAVIS_BRANCH} = "demo" ]; then
+            echo "not build mail_email_services_flowz image";
+        else
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_backend_flowz:$TRAVIS_BRANCH ./vmailServer/;
+            docker images;
+            docker tag mail_backend_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH;
+            docker push $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH;
+        fi'
     - stage: Mail-Frontend-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
@@ -65,4 +77,5 @@ notifications:
       - kavib@officebrain.com
       - chirag@officebrain.com
     on_success: always
-    on_failure: always         
+    on_failure: always
+       
