@@ -13,11 +13,17 @@
         <v-flex xs7 sm8 md8 lg8>
           <v-list-tile @click="" class="you">
             <v-list-tile-content>
-              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html" @click="emailDetail(conv.s3Key)">
+              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html">
               </v-list-tile-title>
-              <v-list-tile-title class="message" v-if="conv.data.body.html==''" @click="emailDetail(conv.s3Key)">
+              <v-list-tile-title class="message" v-if="conv.data.body.html==''">
                 {{ conv.data.body.text }}
               </v-list-tile-title>
+              <v-tooltip bottom class="showEmailDetail">
+                <v-btn icon slot="activator" @click="emailDetail(conv.s3Key)">
+                  <v-icon style="color:#53b9a1;font-size: 30px">info</v-icon>
+                </v-btn>
+                <span>Email Detail</span>
+              </v-tooltip>
               <v-list-tile-sub-title class="conDate">
                 {{ conv.created | moment("from", "now") }}
                 <v-tooltip bottom v-for="cc in conv.data.cc" :key="cc">
@@ -83,7 +89,7 @@
         <v-card-text v-html="detailEmail.html"></v-card-text>
         
         <v-card-actions>
-          <v-btn color="primary" @click="closeModal">Close</v-btn>
+          <v-btn color="primary" style=" position: absolute;top: 4px;right: 0;" @click="closeModal">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -143,6 +149,12 @@
 }
 #replyButton .chip__content:hover{
   cursor: pointer;
+}
+.showEmailDetail{
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: none;
 }
 </style>
 
@@ -215,6 +227,23 @@
       ...mapGetters({
         conversations : 'conversation'
       })
+    },
+    mounted(){
+      $( ".message" ).mouseover(
+        function() {
+          $( ".showEmailDetail" ).css('display','block')
+        }
+      )
+      $( ".message" ).mouseout(
+        function() {
+          $( ".showEmailDetail" ).css('display','none')
+        }
+      )
+      $( ".showEmailDetail" ).mouseover(
+        function() {
+          $( ".showEmailDetail" ).css('display','block')
+        }
+      )
     }
   }
 </script>

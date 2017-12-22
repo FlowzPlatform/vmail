@@ -86,7 +86,6 @@
             this.getConversation(mId)
           }
           else{
-            console.log('in else')
             this.$store.state.selectedSubjects.push({'emailId':emailId ,'subId':subjectList.data[0].id})
             let mId = subjectList.data[0].messageId
             this.getConversation(mId)
@@ -123,7 +122,9 @@
       }),
       formatedEmails(){
         let emails = this.emailList.slice()
-        emails = emails.reverse()
+        emails = emails.sort(function(a,b){
+          return new Date(b.created) - new Date(a.created);
+        });
 
         return emails.filter((email) => {
           return email.emailid.toLowerCase().includes(this.searchword.toLowerCase());

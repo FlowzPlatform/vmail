@@ -178,6 +178,7 @@
 
 <script>
 import microservices from '@/api/microservices'
+import { mapGetters } from 'vuex'
 var moment = require('moment')
 import { mjml2html } from 'mjml'
 
@@ -298,7 +299,7 @@ export default{
 					this.emailMsg = "Email can't be sent"
             setTimeout(function(option) {
               self.emailMsg = null
-            },3000)      
+            },3000)
         }
         else{
         	let self = this
@@ -306,13 +307,28 @@ export default{
             setTimeout(function(option) {
               self.emailMsg = null
               self.$store.state.showReply = false
-            },2000)	
+            },2000)  
+
           this.toEmails = []
           this.ccsEmails = []
           this.bccsEmails = []
           this.subject = ''
           this.body = ''
           this.$store.state.mjmlTheme = ''
+
+          $(".list__tile").css({ cursor:"wait" })
+          let sId = this.$store.state.selectedEmail
+          let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
+          let subId = obj.subId
+          let subObj = this.$store.state.subjectList.find(function (obj) { return obj.id === subId; })
+          let conversation = await microservices.getConversation(subObj.messageId,sId)
+          $(".list__tile").css({ cursor:"pointer" })
+          if(conversation === 401){
+          this.$router.push({ path: '/login' })
+          }
+          else{
+            this.$store.commit('SET_CONVERSATION', conversation.data)
+          }
         }
     	}
     },
