@@ -17,7 +17,7 @@ jobs:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - docker build -t mail_seneca_flowz:$TRAVIS_BRANCH ./vmailSeneca/
       - docker images
-      - docker tag mail_seneca_flowz:dev $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
+      - docker tag mail_seneca_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
       - docker push $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
     - stage: Mail-Email-Services-Flowz
       script:
