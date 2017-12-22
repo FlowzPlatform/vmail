@@ -8,43 +8,52 @@ services:
 branches:
   only:
   - master
+  - demo
 
 jobs:
   include:
     - stage: Mail-Seneca-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_seneca_flowz:"$DOCKER_IMAGE_TAG" ./vmailSeneca/
+      - docker build -t mail_seneca_flowz:$TRAVIS_BRANCH ./vmailSeneca/
       - docker images
-      - docker tag mail_seneca_flowz:dev $DOCKER_USERNAME/mail_seneca_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/mail_seneca_flowz:"$DOCKER_IMAGE_TAG"
+      - docker tag mail_seneca_flowz:dev $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
+      - docker push $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH
     - stage: Mail-Email-Services-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_email_services_flowz:"$DOCKER_IMAGE_TAG" ./vmailServices/email-services/
+      - docker build -t mail_email_services_flowz:$TRAVIS_BRANCH ./vmailServices/email-services/
       - docker images
-      - docker tag mail_email_services_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_email_services_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/mail_email_services_flowz:"$DOCKER_IMAGE_TAG"
+      - docker tag mail_email_services_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH
+      - docker push $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH
     - stage: Mail-Backend-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_backend_flowz:"$DOCKER_IMAGE_TAG" ./vmailServer/
+      - docker build -t mail_backend_flowz:$TRAVIS_BRANCH ./vmailServer/
       - docker images
-      - docker tag mail_backend_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_backend_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/mail_backend_flowz:"$DOCKER_IMAGE_TAG"
+      - docker tag mail_backend_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH
+      - docker push $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH
     - stage: Mail-Frontend-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t mail_frontend_flowz:"$DOCKER_IMAGE_TAG" ./vmailClient/
+      - docker build -t mail_frontend_flowz:$TRAVIS_BRANCH ./vmailClient/
       - docker images
-      - docker tag mail_frontend_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/mail_frontend_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/mail_frontend_flowz:"$DOCKER_IMAGE_TAG"
+      - docker tag mail_frontend_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/mail_frontend_flowz:$TRAVIS_BRANCH
+      - docker push $DOCKER_USERNAME/mail_frontend_flowz:$TRAVIS_BRANCH
     - stage: Upgrade Rancher Service
       script:
-      - bash ./upgrade.sh
+      - 'if [ ${TRAVIS_BRANCH} = "demo" ]; then
+            bash ./upgrade_demo.sh;
+         else
+            bash ./upgrade.sh;
+         fi'
     - stage: Finish Rancher Service
       script:
-      - bash ./finish.sh
+      - 'if [ ${TRAVIS_BRANCH} = "demo" ]; then
+            bash ./finish_demo.sh;
+         else
+            bash ./finish.sh;
+         fi'
 
 notifications:
   email:
@@ -56,9 +65,4 @@ notifications:
       - kavib@officebrain.com
       - chirag@officebrain.com
     on_success: always
-    on_failure: always
-
-
-
-
- 
+    on_failure: always         
