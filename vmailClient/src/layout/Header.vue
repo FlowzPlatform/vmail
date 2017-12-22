@@ -11,11 +11,11 @@
       <v-icon>more_vert</v-icon>
     </v-btn>
     <v-list class="logoutMenu">
-      <v-list-tile @click="logout">
-        <v-list-tile-title>Logout</v-list-tile-title>
-      </v-list-tile>
       <v-list-tile @click="">
         <v-list-tile-title>Settings</v-list-tile-title>
+      </v-list-tile>
+      <v-list-tile @click="logout">
+        <v-list-tile-title>Logout</v-list-tile-title>
       </v-list-tile>
     </v-list>
   </v-menu>

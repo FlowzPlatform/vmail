@@ -175,7 +175,6 @@
         }
         else{
           this.detailEmail = emailDetail.data
-          console.log(this.detailEmail)
         }
       },
       openReply(){
