@@ -118,7 +118,7 @@
 
 <style>
   .unreadAlert{
-    border-left: 7px solid #03A9F4;
+    color: #03A9F4 !important;
   }
   #subjects{
     background-color: #ffffff;
