@@ -1,73 +1,74 @@
 <template>
   <v-list two-line id="conversation">
-    <template v-for="conv in conversations">
-      <v-layout row wrap v-if="conv.received">
-        <v-flex xs2 sm1 md1 lg1 style="text-align: center;">
-          <v-tooltip bottom>
-            <v-avatar slot="activator">
-              <img src="../assets/man.png">
-            </v-avatar>
-            <span>{{ conv.data.from }}</span>
-          </v-tooltip>
-        </v-flex>
-        <v-flex xs7 sm8 md8 lg8>
-          <v-list-tile @click="" class="you">
-            <v-list-tile-content>
-              <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html">
-              </v-list-tile-title>
-              <v-list-tile-title class="message" v-if="conv.data.body.html==''">
-                {{ conv.data.body.text }}
-              </v-list-tile-title>
-              <v-tooltip bottom class="showEmailDetail">
-                <v-btn icon slot="activator" @click="emailDetail(conv.s3Key)">
-                  <v-icon style="color:#53b9a1;font-size: 30px">info</v-icon>
-                </v-btn>
-                <span>Email Detail</span>
-              </v-tooltip>
-              <v-list-tile-sub-title class="conDate">
-                {{ conv.created | moment("from", "now") }}
-                <v-tooltip bottom v-for="cc in conv.data.cc" :key="cc">
-                  <v-avatar slot="activator">
-                    <img src="../assets/man.png" style="height: 25px;width: 25px;">
-                  </v-avatar>
-                  <span>Cc:- {{ cc }}</span>
+    <div id="autoScrollConversation">
+      <template v-for="conv in conversations">
+        <v-layout row wrap v-if="conv.received">
+          <v-flex xs2 sm1 md1 lg1 style="text-align: center;">
+            <v-tooltip bottom>
+              <v-avatar slot="activator">
+                <img src="../assets/man.png">
+              </v-avatar>
+              <span>{{ conv.data.from }}</span>
+            </v-tooltip>
+          </v-flex>
+          <v-flex xs7 sm8 md8 lg8>
+            <v-list-tile @click="" class="you">
+              <v-list-tile-content>
+                <v-list-tile-title class="message" v-if="conv.data.body.html!=''" v-html="conv.data.body.html">
+                </v-list-tile-title>
+                <v-list-tile-title class="message" v-if="conv.data.body.html==''">
+                  {{ conv.data.body.text }}
+                </v-list-tile-title>
+                <v-tooltip bottom class="showEmailDetail">
+                  <v-btn icon slot="activator" @click="emailDetail(conv.s3Key)">
+                    <v-icon style="color:#53b9a1;font-size: 30px">info</v-icon>
+                  </v-btn>
+                  <span>Email Detail</span>
                 </v-tooltip>
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-flex>
-      </v-layout>
+                <v-list-tile-sub-title class="conDate">
+                  {{ conv.created | moment("from", "now") }}
+                  <v-tooltip bottom v-for="cc in conv.data.cc" :key="cc">
+                    <v-avatar slot="activator">
+                      <img src="../assets/man.png" style="height: 25px;width: 25px;">
+                    </v-avatar>
+                    <span>Cc:- {{ cc }}</span>
+                  </v-tooltip>
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-flex>
+        </v-layout>
 
 
-      <v-layout row wrap v-if="!conv.received">
-        <v-flex xs7 sm8 md8 lg8 offset-xs3 offset-sm3 offset-md3 offset-lg3>
-          <v-list-tile @click="" class="me">
-            <v-list-tile-content>
-              <v-list-tile-title class="message" v-html="conv.data.body">
-              </v-list-tile-title>
-              <v-list-tile-sub-title class="conDate">
-                {{ conv.created | moment("from", "now") }}
-                <v-tooltip bottom v-for="cc in conv.data.cc" :key="cc">
-                  <v-avatar slot="activator">
-                    <img src="../assets/man.png" style="height: 25px;width: 25px;">
-                  </v-avatar>
-                  <span>Cc:- {{ cc }}</span>
-                </v-tooltip>
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-flex>
-        <v-flex xs2 sm1 md1 lg1 style="text-align: center;">
-          <v-tooltip bottom>
-            <v-avatar slot="activator">
-              <img src="../assets/man.png">
-            </v-avatar>
-            <span>{{ conv.data.from }}</span>
-          </v-tooltip>
-        </v-flex>
-      </v-layout>
-    </template>
-
+        <v-layout row wrap v-if="!conv.received">
+          <v-flex xs7 sm8 md8 lg8 offset-xs3 offset-sm3 offset-md3 offset-lg3>
+            <v-list-tile @click="" class="me">
+              <v-list-tile-content>
+                <v-list-tile-title class="message" v-html="conv.data.body">
+                </v-list-tile-title>
+                <v-list-tile-sub-title class="conDate">
+                  {{ conv.created | moment("from", "now") }}
+                  <v-tooltip bottom v-for="cc in conv.data.cc" :key="cc">
+                    <v-avatar slot="activator">
+                      <img src="../assets/man.png" style="height: 25px;width: 25px;">
+                    </v-avatar>
+                    <span>Cc:- {{ cc }}</span>
+                  </v-tooltip>
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-flex>
+          <v-flex xs2 sm1 md1 lg1 style="text-align: center;">
+            <v-tooltip bottom>
+              <v-avatar slot="activator">
+                <img src="../assets/man.png">
+              </v-avatar>
+              <span>{{ conv.data.from }}</span>
+            </v-tooltip>
+          </v-flex>
+        </v-layout>
+      </template>
+    </div>
     <v-dialog v-model="dialog" max-width="80%" lazy v-if="detailEmail!=null">
       <v-card style="background-color: #eff4f5;color: #34495e;">
         <v-card-title>
@@ -115,6 +116,8 @@
   margin-top: 5px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+  max-height: 856px;
+  overflow-y: auto;
 }
 #conversation a{
   height: auto !important;

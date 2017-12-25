@@ -100,7 +100,9 @@
           this.$router.push({ path: '/login' })
         }
         else{
-          this.$store.commit('SET_CONVERSATION', conversation.data)
+          await this.$store.commit('SET_CONVERSATION', conversation.data)
+
+          $("#conversation").animate({ scrollTop: $('#autoScrollConversation').height() }, 1000);
         }  
       }
     },
