@@ -38,7 +38,7 @@ ARG module2=vmailmicro
 #build application
 ENV microUrl="http://api.flowz.com/$module2"
 ENV serverBaseUrl="http://api.flowz.com/$module1/"
-ENV socketUrl="http://ws.flowz.com:4036"
+ENV socketUrl="ws://ws.flowz.com:4036"
 
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
