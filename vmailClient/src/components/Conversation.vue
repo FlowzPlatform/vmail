@@ -19,7 +19,7 @@
                 <v-list-tile-title class="message" v-if="conv.data.body.html==''">
                   {{ conv.data.body.text }}
                 </v-list-tile-title>
-                <v-tooltip bottom class="showEmailDetail">
+                <v-tooltip bottom class="showEmDetail">
                   <v-btn icon slot="activator" @click="emailDetail(conv.s3Key)">
                     <v-icon style="color:#53b9a1;font-size: 30px">info</v-icon>
                   </v-btn>
@@ -153,7 +153,7 @@
 #replyButton .chip__content:hover{
   cursor: pointer;
 }
-.showEmailDetail{
+.showEmDetail{
   position: absolute;
   top: 0;
   right: 0;
@@ -234,17 +234,12 @@
     mounted(){
       $( ".message" ).mouseover(
         function() {
-          $( ".showEmailDetail" ).css('display','block')
+          $( ".showEmDetail" ).css('display','block')
         }
       )
       $( ".message" ).mouseout(
         function() {
-          $( ".showEmailDetail" ).css('display','none')
-        }
-      )
-      $( ".showEmailDetail" ).mouseover(
-        function() {
-          $( ".showEmailDetail" ).css('display','block')
+          $( ".showEmDetail" ).css('display','none')
         }
       )
     }
