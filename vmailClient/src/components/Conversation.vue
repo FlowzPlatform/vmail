@@ -154,7 +154,7 @@
   cursor: pointer;
 }
 .showEmDetail{
-  position: absolute;
+  position: absolute !important;
   top: 0;
   right: 0;
   display: none;
