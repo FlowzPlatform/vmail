@@ -6,6 +6,7 @@ import routes from './router'
 import $ from "jquery"
 import store from './store'
 import { sync } from 'vuex-router-sync'
+import VueFrame from 'vue-frame'
 
 Vue.use(require('vue-moment'))
 
@@ -21,6 +22,7 @@ Vue.use(Vuetify)
 
 import vueRouter from 'vue-router'
 Vue.use(vueRouter)
+
 
 var VueCookie = require('vue-cookie')
 Vue.use(VueCookie)
@@ -74,5 +76,5 @@ new Vue({
   router,
   store: store,
   template: '<App/>',
-  components: { App }
+  components: { App,VueFrame }
 })
