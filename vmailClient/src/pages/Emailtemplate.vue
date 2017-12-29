@@ -153,7 +153,6 @@ export default {
       }
     },
     async mjmlList(){
-      console.log('calling')
       let mjmlList = await microservices.mjmlList()
       if(mjmlList === 401){
         this.$router.push({ path: '/login' })
