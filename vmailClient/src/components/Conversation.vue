@@ -113,10 +113,10 @@
   background-color: transparent !important;
 }
 #conversation{
-  margin-top: 5px;
+  /*margin-top: 5px;*/
   background-color: #ffffff;
   box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
-  max-height: 856px;
+  max-height: 850px;
   overflow-y: auto;
 }
 #conversation a{
@@ -240,6 +240,11 @@
       $( ".message" ).mouseout(
         function() {
           $( ".showEmDetail" ).css('display','none')
+        }
+      )
+      $( ".showEmDetail" ).mouseover(
+        function() {
+          $( ".showEmDetail" ).css('display','block')
         }
       )
     }

@@ -208,6 +208,9 @@ export default{
   methods: {
     openMjml () {
       this.$router.push({ path: 'Emailtemplate' })
+      this.$store.state.replyDetails.subject = this.subject
+      this.$store.state.replyDetails.to = this.toEmails
+      this.$store.state.replyDetails.cc = this.ccsEmails
     },
     formatDate (date) {
       if (!date) {
@@ -267,7 +270,7 @@ export default{
           from = this.$store.state.replyDetails.from;
     		}
         else{
-          from = 'info@vmail.officebrain.com';
+          from = 'info@flowz.com';
         }
 
         let body = this.body+'<br><p>----- Original Message -----</p><br><p>From:'+this.$store.state.replyDetails.to.toString()+'</p><p>To:'+this.$store.state.replyDetails.from+'</p><p>Cc:'+this.$store.state.replyDetails.cc.toString()+'</p><p>Subject:'+this.$store.state.replyDetails.subject+'</p>'+this.$store.state.replyDetails.content
