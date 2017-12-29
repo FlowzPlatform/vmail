@@ -6,7 +6,6 @@ import routes from './router'
 import $ from "jquery"
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import VueFrame from 'vue-frame'
 
 Vue.use(require('vue-moment'))
 
@@ -76,5 +75,5 @@ new Vue({
   router,
   store: store,
   template: '<App/>',
-  components: { App,VueFrame }
+  components: { App }
 })

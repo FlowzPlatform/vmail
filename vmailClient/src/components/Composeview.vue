@@ -270,10 +270,14 @@ export default{
           from = this.$store.state.replyDetails.from;
     		}
         else{
-          from = 'info@flowz.com';
+          from = this.$store.state.selectedEmail;
         }
 
         let body = this.body+'<br><p>----- Original Message -----</p><br><p>From:'+this.$store.state.replyDetails.to.toString()+'</p><p>To:'+this.$store.state.replyDetails.from+'</p><p>Cc:'+this.$store.state.replyDetails.cc.toString()+'</p><p>Subject:'+this.$store.state.replyDetails.subject+'</p>'+this.$store.state.replyDetails.content
+
+        if(this.calDetail.summary!= null && this.calDetail.summary!= ''){
+          body = '<p>Cal Event</p><p>---------------------<p>'+this.calDetail.summary+'<p>Content</p>'+body
+        }
 
     		let myData = {
           "to": this.toEmails,
@@ -318,6 +322,10 @@ export default{
           this.subject = ''
           this.body = ''
           this.$store.state.mjmlTheme = ''
+          this.calDetail.summary = ''
+          this.calDetail.date = ''
+          this.calDetail.time = ''
+
 
           $(".list__tile").css({ cursor:"wait" })
           let sId = this.$store.state.selectedEmail
