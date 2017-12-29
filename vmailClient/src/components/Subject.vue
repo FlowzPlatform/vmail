@@ -79,8 +79,6 @@
 
         let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
         if(obj == undefined){
-          console.log(sId)
-          console.log(subId)
           this.$store.state.selectedSubjects.push({'emailId':sId ,'subId':subId})
         }
         else{

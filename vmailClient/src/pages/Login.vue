@@ -218,6 +218,11 @@
             setTimeout(function(option) {
               self.successMsg = null
             },3000)
+
+            let location = psl.parse(window.location.hostname)  // get parent domain
+            location = location.domain === null ? location.input : location.domain
+            self.$cookie.set('auth_token', auth.logintoken, {expires: 1, domain: location}) // Store in cookie
+            self.$router.push({ path: '/user/maildashboard' })
           }
         }
       },
@@ -252,6 +257,22 @@
         this.$router.push({ path: '/user/maildashboard' })
       }
 
+    },
+    mounted(){
+      var simpleLogin = document.getElementById('login')
+      let self = this
+      simpleLogin.onkeypress = function (e) {
+        if (e.key == 'Enter'){
+          self.login()
+        }
+      }
+
+      var ldap = document.getElementById('ldap')
+      ldap.onkeypress = function (e) {
+        if (e.key == 'Enter'){
+          self.ldapLogin()
+        }
+      }
     }
   }
 </script>
