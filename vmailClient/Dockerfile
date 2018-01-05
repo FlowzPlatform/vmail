@@ -1,5 +1,7 @@
 FROM whiledo/letsencrypt-apache-ubuntu
 
+ARG domainkey
+
 # install dependencies
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -29,16 +31,6 @@ RUN mkdir -p /opt/app
 WORKDIR /opt/app
 ADD . /opt/app
 RUN npm install
-
-
-ARG module1=vservice
-ARG module2=vmailmicro
-
-
-#build application
-ENV microUrl="http://api.flowz.com/$module2"
-ENV serverBaseUrl="http://api.flowz.com/$module1/"
-ENV socketUrl="ws://ws.flowz.com:4036"
 
 RUN npm run build
 RUN cp -a -f /opt/app/dist/* /var/www/html/
