@@ -5,7 +5,7 @@
       <v-btn color="info" @click="openCalendar" style="width: 44%;">Calendar</v-btn>
     </div>
     <template v-for="subject in subjects">
-      <v-list-tile @click="getConversation(subject.messageId,subject.id)" :class="getActiveSubject(subject)">
+      <v-list-tile @click="getConversation(subject)" :class="getActiveSubject(subject)">
         <v-list-tile-content>
           <v-tooltip bottom>
             <v-list-tile-title class="subjtitle" slot="activator">
@@ -38,7 +38,7 @@
         let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
         if(obj != undefined){
           if(subject.unread){
-            return subject.id === obj.subId ? 'subFocus unreadAlert' : ''
+            return subject.id === obj.subId ? '' : 'unreadAlert'
           }
           else{
             return subject.id === obj.subId ? 'subFocus' : ''
@@ -71,15 +71,18 @@
         this.$store.state.replyDetails.content = ''
         this.$store.state.replyDetails.parentId = ''
       },
-      async getConversation (mId,subId) {
+      async getConversation (subject) {
+        let mId = subject.messageId
+        let subId = subject.id
         let sId = this.$store.state.selectedEmail
+        subject.unread = false
 
         let obj = this.$store.state.selectedSubjects.find(function (obj) { return obj.emailId === sId; })
         if(obj == undefined){
           this.$store.state.selectedSubjects.push({'emailId':sId ,'subId':subId})
         }
         else{
-          obj.subId = subId 
+          obj.subId = subId
         }
 
         $(".list__tile").css({ cursor:"wait" })
@@ -100,7 +103,9 @@
           this.$router.push({ path: '/login' })
         }
         else{
-          this.$store.commit('SET_CONVERSATION', conversation.data)
+          await this.$store.commit('SET_CONVERSATION', conversation.data)
+
+          $("#conversation").animate({ scrollTop: $('#autoScrollConversation').height() }, 1000);
         }  
       }
     },
@@ -117,13 +122,10 @@
 
 
 <style>
-  .unreadAlert{
-    color: #03A9F4 !important;
-  }
   #subjects{
     background-color: #ffffff;
     box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
-    max-height: 856px;
+    max-height: 850px;
     overflow-y: auto;
   }
   .subDate{
@@ -134,5 +136,11 @@
   }
   .subFocus{
     background-color: rgba(0,0,0,.12);
+  }
+  .unreadAlert .subjtitle{
+    color: #03A9F4 !important;
+  }
+  .unreadAlert{
+    background-color: #dcebee;
   }
 </style>

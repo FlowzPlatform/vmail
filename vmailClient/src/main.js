@@ -22,6 +22,7 @@ Vue.use(Vuetify)
 import vueRouter from 'vue-router'
 Vue.use(vueRouter)
 
+
 var VueCookie = require('vue-cookie')
 Vue.use(VueCookie)
 

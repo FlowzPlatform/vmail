@@ -347,7 +347,7 @@ const emailGroups = cors(jwtAuth(privateKey)(async(req, res) => {
 const emailSubjects = cors(jwtAuth(privateKey)(async(req, res) => {
   await rethinkDBObj.table('emailSubjects')
   .filter(rethinkDBObj.row('emailId').eq(req.query.eid))
-  .orderBy(rethinkDBObj.asc('created'))
+  .orderBy(rethinkDBObj.asc('modified'))
   .run(rethinkConnection, function(err, cursor) {
     cursor.toArray(function(err, result) {
       send(res, 200, result)
