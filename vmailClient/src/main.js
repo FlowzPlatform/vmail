@@ -7,6 +7,11 @@ import $ from "jquery"
 import store from './store'
 import { sync } from 'vuex-router-sync'
 
+const Feathers = require('feathers/client')
+const hooks = require('feathers-hooks')
+const socketio = require('feathers-socketio/client')
+const io = require('socket.io-client')
+
 Vue.use(require('vue-moment'))
 
 import tinymce from 'vue-tinymce-editor'
@@ -25,6 +30,17 @@ Vue.use(vueRouter)
 
 var VueCookie = require('vue-cookie')
 Vue.use(VueCookie)
+
+  
+let baseUrl = process.env.socketUrl;
+const socket = io(baseUrl);
+const feathers = Feathers()
+  .configure(socketio(socket))
+  .configure(hooks())
+// const app = feathers().configure(socketio(socket))
+
+const vueFeathers = require('vue-feathers')
+Vue.use(vueFeathers, feathers)
 
 
 Vue.config.productionTip = false

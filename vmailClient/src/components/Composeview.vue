@@ -273,7 +273,7 @@ export default{
           from = this.$store.state.selectedEmail;
         }
 
-        let body = this.body+'<br><p>----- Original Message -----</p><br><p>From:'+this.$store.state.replyDetails.to.toString()+'</p><p>To:'+this.$store.state.replyDetails.from+'</p><p>Cc:'+this.$store.state.replyDetails.cc.toString()+'</p><p>Subject:'+this.$store.state.replyDetails.subject+'</p>'+this.$store.state.replyDetails.content
+        let body = this.body+ this.mjml + '<br><p>----- Original Message -----</p><br><p>From:'+this.$store.state.replyDetails.to.toString()+'</p><p>To:'+this.$store.state.replyDetails.from+'</p><p>Cc:'+this.$store.state.replyDetails.cc.toString()+'</p><p>Subject:'+this.$store.state.replyDetails.subject+'</p>'+this.$store.state.replyDetails.content
 
         if(this.calDetail.summary!= null && this.calDetail.summary!= ''){
           body = '<p>Cal Event</p><p>---------------------<p>'+this.calDetail.summary+'<p>Content</p>'+body

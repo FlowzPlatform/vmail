@@ -40,7 +40,9 @@ app.configure(rethinkdb);
 app.configure(rest());
 app.configure(socketio(4036,{
   wsEngine: 'uws',
-  origin: '*.flowz.com:*'
+  // origin: '*.flowz.com:*'
+  origin: '*.' + (process.env.domainkey ? 'localhost' : process.env.domainkey) + ':*'
+  // origin: '*.localhost:*'
 }));
 
 // Configure other middleware (see `middleware/index.js`)
