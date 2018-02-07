@@ -14,7 +14,7 @@ expObj.use(cors())
 let smtpSettings = require('config')
 
 if(process.env.smtpHost){
-  smtpSettings.connection.host = process.env.smtphost
+  smtpSettings.connection.host = process.env.smtpHost
 }
 if(process.env.smtpPort){
   smtpSettings.connection.port = process.env.smtpPort
