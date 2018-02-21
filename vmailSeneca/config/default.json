@@ -1,6 +1,6 @@
 {
 	"connection":{
-	  "host": "mail.flowz.com",
+	  "host": "smtp.gmail.com",
 	  "port": 587,
 	  "secure": false
 	},
