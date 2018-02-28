@@ -40,6 +40,7 @@ then
     USERNAME="$DOCKER_USERNAME_FLOWZ";
     TAG="latest";
     SENECAURL="$SENECAURL_MASTER";
+    FRONT_HOST="$FRONT_HOST_MASTER";
   }
 elif [ "$TRAVIS_BRANCH" = "develop" ]
 then
@@ -50,6 +51,7 @@ then
       USERNAME="$DOCKER_USERNAME";
       TAG="dev";
       SENECAURL="$SENECAURL_DEVELOP";
+      FRONT_HOST="$FRONT_HOST_DEVELOP";
   }
 else
   {
@@ -59,6 +61,7 @@ else
       USERNAME="$DOCKER_USERNAME";
       TAG="qa";
       SENECAURL="$SENECAURL_QA";
+      FRONT_HOST="$FRONT_HOST_QA";
   }
 fi
 
@@ -102,5 +105,5 @@ curl -u ""$RANCHER_USER":"$RANCHER_PASS"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-     "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_frontend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=vmail-front","io.rancher.scheduler.affinity:container_label_soft_ne": "io.rancher.stack_service.name=cluster-flowz/vmail-frontend-service"},"ports": ["80:80/tcp","443:443/tcp"],"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 80,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"requestLine": "GET \"http://localhost\" \"HTTP/1.0\"","responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
+     "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_frontend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$FRONT_HOST"'","io.rancher.scheduler.affinity:container_label_soft_ne": "io.rancher.stack_service.name=front-flowz/vmail-frontend-service"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 80,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"requestLine": "GET \"http://localhost\" \"HTTP/1.0\"","responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
 http://rancher.flowz.com:8080/v2-beta/projects/$ENV_ID/services/$SERVICE_ID_FRONTEND?action=upgrade
