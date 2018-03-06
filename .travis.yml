@@ -9,6 +9,7 @@ branches:
   only:
   - master
   - develop
+  - staging
   - QA
 
 jobs:
@@ -27,6 +28,14 @@ jobs:
             docker images;
             docker tag mail_seneca_flowz:dev $DOCKER_USERNAME/mail_seneca_flowz:dev;
             docker push $DOCKER_USERNAME/mail_seneca_flowz:dev;
+        elif [ ${TRAVIS_BRANCH} = "staging" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_seneca_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER ./vmailSeneca/;
+            docker tag mail_seneca_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker tag mail_seneca_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_seneca_flowz:staging;
+            docker images;
+            docker push $DOCKER_USERNAME/mail_seneca_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker push $DOCKER_USERNAME/mail_seneca_flowz:staging;
         else
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker build -t mail_seneca_flowz:qa ./vmailSeneca/;
@@ -48,6 +57,14 @@ jobs:
             docker images;
             docker tag mail_email_services_flowz:dev $DOCKER_USERNAME/mail_email_services_flowz:dev;
             docker push $DOCKER_USERNAME/mail_email_services_flowz:dev;
+        elif [ ${TRAVIS_BRANCH} = "staging" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_email_services_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER ./vmailServices/email-services/;
+            docker tag mail_email_services_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker tag mail_email_services_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_email_services_flowz:staging;
+            docker images;
+            docker push $DOCKER_USERNAME/mail_email_services_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker push $DOCKER_USERNAME/mail_email_services_flowz:staging;
         else
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker build -t mail_email_services_flowz:qa ./vmailServices/email-services/;
@@ -69,6 +86,14 @@ jobs:
             docker images;
             docker tag mail_backend_flowz:dev $DOCKER_USERNAME/mail_backend_flowz:dev;
             docker push $DOCKER_USERNAME/mail_backend_flowz:dev;
+        elif [ ${TRAVIS_BRANCH} = "staging" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_backend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER ./vmailServer/;
+            docker tag mail_backend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker tag mail_backend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_backend_flowz:staging;
+            docker images;
+            docker push $DOCKER_USERNAME/mail_backend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker push $DOCKER_USERNAME/mail_backend_flowz:staging;
         else
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker build -t mail_backend_flowz:qa ./vmailServer/;
@@ -90,6 +115,14 @@ jobs:
             docker images;
             docker tag mail_frontend_flowz:dev $DOCKER_USERNAME/mail_frontend_flowz:dev;
             docker push $DOCKER_USERNAME/mail_frontend_flowz:dev;
+        elif [ ${TRAVIS_BRANCH} = "staging" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t mail_frontend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER --build-arg domainkey="$DOMAINKEY_STAGING" ./vmailClient/;
+            docker tag mail_frontend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_frontend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker tag mail_frontend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/mail_frontend_flowz:staging;
+            docker images;
+            docker push $DOCKER_USERNAME/mail_frontend_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
+            docker push $DOCKER_USERNAME/mail_frontend_flowz:staging;
         else
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker build -t mail_frontend_flowz:qa --build-arg domainkey="$DOMAINKEY_QA" ./vmailClient/;
