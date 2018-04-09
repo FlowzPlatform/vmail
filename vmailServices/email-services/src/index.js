@@ -230,6 +230,7 @@ function updateEmails(mid,sid) {
 
 /*------------------------------------------------ SEND EMAIL ---------------------------------------------*/
 async function sendEmailFun(req){
+  try{
   req = await json(req)
   let inReplyTo = ''
   let references = []
@@ -330,6 +331,9 @@ async function sendEmailFun(req){
   else{
     return {'error':'Atleast one recipient is required.'}
   }
+}catch(err){
+  return { 'error': err }
+}
 }
 
 /*---------------------------------------------- EMAIL GROUP SERVICE ---------------------------------------*/
