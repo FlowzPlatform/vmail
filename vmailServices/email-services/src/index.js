@@ -230,7 +230,6 @@ function updateEmails(mid,sid) {
 
 /*------------------------------------------------ SEND EMAIL ---------------------------------------------*/
 async function sendEmailFun(req){
-  try{
   req = await json(req)
   let inReplyTo = ''
   let references = []
@@ -331,8 +330,26 @@ async function sendEmailFun(req){
   else{
     return {'error':'Atleast one recipient is required.'}
   }
-}catch(err){
-  return { 'error': err }
+}
+
+async function sendemaildataservice(req){
+ if(req.to == "" || req.to == null || req.to == undefined){
+    throw createError(401, "Atleast one recipient is required.");
+ }
+
+ let response = {
+      method: 'POST',
+      url: senecaUrl+'/email/send',
+      json: true,
+      body: req
+    }
+const emailSendResponse = await rp(response);
+console.log("emailSendResponse",emailSendResponse) 
+
+if(emailSendResponse!= undefined){
+   return {'success':'email sent successfully'}
+}else{
+ throw createError(500, "email sending failed.");
 }
 }
 
@@ -491,6 +508,13 @@ const sendPassword = cors((async(req, res) => {
   send(res, 200, resp)
 }))
 
+/*---------------------------------------------- SEND EMAILDATA SERVICE ---------------------------------------*/
+const sendemaildata = cors((async(req, res) => {
+  let resp = await sendemaildataservice(req);
+  return resp;
+// console.log("resp",resp)
+  // send(res, 200, resp)
+}))
 
 /*---------------------------------------------- NOT FOUND SERVICE ----------------------------------------*/
 const notfound = cors(jwtAuth(privateKey)((req, res) => send(res, 200,"")))
@@ -502,6 +526,7 @@ module.exports = router(
   get('/emailConversation', emailConversation),
   get('/emailDetail', emailDetail),
   post('/sendEmail', sendEmail),
+  post('/sendemaildata',sendemaildata),
   post('/sendPassword', sendPassword),
   get('/requestIcalEvents', requestIcalEvents),
   post('/saveMjml', saveMjml),
