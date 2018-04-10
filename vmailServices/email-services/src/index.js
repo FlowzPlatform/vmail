@@ -333,6 +333,7 @@ async function sendEmailFun(req){
 }
 
 async function sendemaildataservice(req){
+ req = await json(req)
  if(req.to == "" || req.to == null || req.to == undefined){
     throw createError(401, "Atleast one recipient is required.");
  }
