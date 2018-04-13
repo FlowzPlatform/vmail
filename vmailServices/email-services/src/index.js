@@ -333,10 +333,34 @@ async function sendEmailFun(req){
 }
 
 async function sendemaildataservice(req){
+ req = await json(req)
+ let inReplyTo = ''
+ req['replyTo'] = req.from
+ let references = []
+ 
  if(req.to == "" || req.to == null || req.to == undefined){
     throw createError(401, "Atleast one recipient is required.");
  }
+    if(req.cc == undefined)
+      req['cc'] = []
+    if(req.bcc == undefined)
+      req['bcc'] = []
+    if(req.subject == undefined)
+      req['subject'] = 'untitled subject'
+    if(req.body == undefined)
+      req['body'] = 'null body'
 
+
+    if(!Array.isArray(req.to)){
+      req.to = req.to.split(',')
+    }
+    if(!Array.isArray(req.cc)){
+      req.cc = req.cc.split(',')
+    }
+    if(!Array.isArray(req.bcc)){
+      req.bcc = req.bcc.split(',')
+    }
+    
  let response = {
       method: 'POST',
       url: senecaUrl+'/email/send',
