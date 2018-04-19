@@ -332,6 +332,51 @@ async function sendEmailFun(req){
   }
 }
 
+async function sendemaildataservice(req){
+ req = await json(req)
+ let inReplyTo = ''
+ req['replyTo'] = req.from
+ let references = []
+ 
+ if(req.to == "" || req.to == null || req.to == undefined){
+    throw createError(401, "Atleast one recipient is required.");
+ }
+    if(req.cc == undefined)
+      req['cc'] = []
+    if(req.bcc == undefined)
+      req['bcc'] = []
+    if(req.subject == undefined)
+      req['subject'] = 'untitled subject'
+    if(req.body == undefined)
+      req['body'] = 'null body'
+
+
+    if(!Array.isArray(req.to)){
+      req.to = req.to.split(',')
+    }
+    if(!Array.isArray(req.cc)){
+      req.cc = req.cc.split(',')
+    }
+    if(!Array.isArray(req.bcc)){
+      req.bcc = req.bcc.split(',')
+    }
+    
+ let response = {
+      method: 'POST',
+      url: senecaUrl+'/email/send',
+      json: true,
+      body: req
+    }
+const emailSendResponse = await rp(response);
+console.log("emailSendResponse",emailSendResponse) 
+
+if(emailSendResponse!= undefined){
+   return {'success':'email sent successfully'}
+}else{
+ throw createError(500, "email sending failed.");
+}
+}
+
 /*---------------------------------------------- EMAIL GROUP SERVICE ---------------------------------------*/
 const emailGroups = cors(jwtAuth(privateKey)(async(req, res) => {
   await rethinkDBObj.db(rdb).table('emailIds')
@@ -487,6 +532,13 @@ const sendPassword = cors((async(req, res) => {
   send(res, 200, resp)
 }))
 
+/*---------------------------------------------- SEND EMAILDATA SERVICE ---------------------------------------*/
+const sendemaildata = cors((async(req, res) => {
+  let resp = await sendemaildataservice(req);
+  return resp;
+// console.log("resp",resp)
+  // send(res, 200, resp)
+}))
 
 /*---------------------------------------------- NOT FOUND SERVICE ----------------------------------------*/
 const notfound = cors(jwtAuth(privateKey)((req, res) => send(res, 200,"")))
@@ -498,6 +550,7 @@ module.exports = router(
   get('/emailConversation', emailConversation),
   get('/emailDetail', emailDetail),
   post('/sendEmail', sendEmail),
+  post('/sendemaildata',sendemaildata),
   post('/sendPassword', sendPassword),
   get('/requestIcalEvents', requestIcalEvents),
   post('/saveMjml', saveMjml),
