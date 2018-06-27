@@ -335,7 +335,7 @@ async function sendEmailFun(req){
 async function sendemaildataservice(req){
  req = await json(req)
  let inReplyTo = ''
- req['replyTo'] = req.from
+//  req['replyTo'] = req.from
  let references = []
  
  if(req.to == "" || req.to == null || req.to == undefined){
