@@ -51,6 +51,8 @@ then
     SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_MASTER";
     
     BACKEND_HOST="$BACKEND_HOST_MASTER";
+    
+    STACK_SERVICE_NAME_FOR_FRONT="$STACK_SERVICE_NAME_FOR_FRONT_MASTER";
   }
 elif [ "$TRAVIS_BRANCH" = "develop" ]
 then
@@ -72,6 +74,8 @@ then
       SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_DEVELOP";
       
       BACKEND_HOST="$BACKEND_HOST_DEVELOP";
+      
+      STACK_SERVICE_NAME_FOR_FRONT="$STACK_SERVICE_NAME_FOR_FRONT_DEVELOP";
   }
 elif [ "$TRAVIS_BRANCH" = "staging" ]
 then
@@ -93,6 +97,8 @@ then
       SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_STAGING";
       
       BACKEND_HOST="$BACKEND_HOST_STAGING";
+  
+      STACK_SERVICE_NAME_FOR_FRONT="$STACK_SERVICE_NAME_FOR_FRONT_STAGING";
   }  
 else
   {
@@ -113,6 +119,8 @@ else
       SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_QA";
       
       BACKEND_HOST="$BACKEND_HOST_QA";
+      
+      ="$STACK_SERVICE_NAME_FOR_FRONT_QA";
   }
 fi
 
@@ -156,5 +164,5 @@ curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-     "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_frontend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$FRONT_HOST"'","io.rancher.scheduler.affinity:container_label_soft_ne": "io.rancher.stack_service.name=front-flowz/vmail-frontend-service"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 80,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"requestLine": "GET \"http://localhost\" \"HTTP/1.0\"","responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
+     "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_frontend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$FRONT_HOST"'","io.rancher.scheduler.affinity:container_label_soft_ne": "'"$STACK_SERVICE_NAME_FOR_FRONT"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 80,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"requestLine": "GET \"http://localhost\" \"HTTP/1.0\"","responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
 $RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID_FRONTEND?action=upgrade
