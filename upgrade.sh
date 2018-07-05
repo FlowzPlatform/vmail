@@ -44,6 +44,13 @@ then
     RANCHER_ACCESSKEY="$RANCHER_ACCESSKEY_MASTER";
     RANCHER_SECRETKEY="$RANCHER_SECRETKEY_MASTER";
     RANCHER_URL="$RANCHER_URL_MASTER";
+    
+    SERVICE_NAME_SENECA="$SERVICE_NAME_SENECA_MASTER";
+    SERVICE_NAME_MICRO="$SERVICE_NAME_MICRO_MASTER";
+    SERVICE_NAME_BACKEND="$SERVICE_NAME_BACKEND_MASTER";
+    SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_MASTER";
+    
+    BACKEND_HOST="$BACKEND_HOST_MASTER";
   }
 elif [ "$TRAVIS_BRANCH" = "develop" ]
 then
@@ -58,6 +65,13 @@ then
       RANCHER_ACCESSKEY="$RANCHER_ACCESSKEY_DEVELOP";
       RANCHER_SECRETKEY="$RANCHER_SECRETKEY_DEVELOP";
       RANCHER_URL="$RANCHER_URL_DEVELOP";
+      
+      SERVICE_NAME_SENECA="$SERVICE_NAME_SENECA_DEVELOP";
+      SERVICE_NAME_MICRO="$SERVICE_NAME_MICRO_DEVELOP";
+      SERVICE_NAME_BACKEND="$SERVICE_NAME_BACKEND_DEVELOP";
+      SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_DEVELOP";
+      
+      BACKEND_HOST="$BACKEND_HOST_DEVELOP";
   }
 elif [ "$TRAVIS_BRANCH" = "staging" ]
 then
@@ -72,11 +86,18 @@ then
       RANCHER_ACCESSKEY="$RANCHER_ACCESSKEY_STAGING";
       RANCHER_SECRETKEY="$RANCHER_SECRETKEY_STAGING";
       RANCHER_URL="$RANCHER_URL_STAGING";
+      
+      SERVICE_NAME_SENECA="$SERVICE_NAME_SENECA_STAGING";
+      SERVICE_NAME_MICRO="$SERVICE_NAME_MICRO_STAGING";
+      SERVICE_NAME_BACKEND="$SERVICE_NAME_BACKEND_STAGING";
+      SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_STAGING";
+      
+      BACKEND_HOST="$BACKEND_HOST_STAGING";
   }  
 else
   {
       echo "call $TRAVIS_BRANCH branch"
-      ENV_ID=`curl -u ""$RANCHER_ACCESSKEY_QA":"$RANCHER_SECRETKEY_QA"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL_QA/v2-beta/projects?name=QA" | jq '.data[].id' | tr -d '"'`
+      ENV_ID=`curl -u ""$RANCHER_ACCESSKEY_QA":"$RANCHER_SECRETKEY_QA"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL_QA/v2-beta/projects?name=Develop" | jq '.data[].id' | tr -d '"'`
       echo $ENV_ID
       USERNAME="$DOCKER_USERNAME";
       TAG="qa";
@@ -85,19 +106,26 @@ else
       RANCHER_ACCESSKEY="$RANCHER_ACCESSKEY_QA";
       RANCHER_SECRETKEY="$RANCHER_SECRETKEY_QA";
       RANCHER_URL="$RANCHER_URL_QA";
+      
+      SERVICE_NAME_SENECA="$SERVICE_NAME_SENECA_QA";
+      SERVICE_NAME_MICRO="$SERVICE_NAME_MICRO_QA";
+      SERVICE_NAME_BACKEND="$SERVICE_NAME_BACKEND_QA";
+      SERVICE_NAME_FRONTEND="$SERVICE_NAME_FRONTEND_QA";
+      
+      BACKEND_HOST="$BACKEND_HOST_QA";
   }
 fi
 
-SERVICE_ID_SENECA=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=vmail-seneca-service" | jq '.data[].id' | tr -d '"'`
+SERVICE_ID_SENECA=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=$SERVICE_NAME_SENECA" | jq '.data[].id' | tr -d '"'`
 echo $SERVICE_ID_SENECA
 
-SERVICE_ID_MICRO=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=vmail-micro-service" | jq '.data[].id' | tr -d '"'`
+SERVICE_ID_MICRO=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=$SERVICE_NAME_MICRO" | jq '.data[].id' | tr -d '"'`
 echo $SERVICE_ID_MICRO
 
-SERVICE_ID_BACKEND=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=vmail-backend-service" | jq '.data[].id' | tr -d '"'`
+SERVICE_ID_BACKEND=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=$SERVICE_NAME_BACKEND" | jq '.data[].id' | tr -d '"'`
 echo $SERVICE_ID_BACKEND
 
-SERVICE_ID_FRONTEND=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=vmail-frontend-service" | jq '.data[].id' | tr -d '"'`
+SERVICE_ID_FRONTEND=`curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" -X GET -H 'Accept: application/json' -H 'Content-Type: application/json' "$RANCHER_URL/v2-beta/projects/$ENV_ID/services?name=$SERVICE_NAME_FRONTEND" | jq '.data[].id' | tr -d '"'`
 echo $SERVICE_ID_FRONTEND
 
 curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
@@ -105,14 +133,14 @@ curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_seneca_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["4000:4000/tcp"],"environment": {"smtphost": "'"$SMTPHOST"'","smtpPort": "'"$SMTPPORT"'","user": "'"$USER"'","password": "'"$PASSWORD"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 4000,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
+  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_seneca_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$BACKEND_HOST"'"},"ports": ["4000:4000/tcp"],"environment": {"smtphost": "'"$SMTPHOST"'","smtpPort": "'"$SMTPPORT"'","user": "'"$USER"'","password": "'"$PASSWORD"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 4000,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
 $RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID_SENECA?action=upgrade
 
 curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
 -X POST \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
--d '{"inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_email_services_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3003:3003/tcp"],"environment": {"rdb": "'"$RDB"'","rhost": "'"$RDB_HOST"'","rport": "'"$RDB_PORT"'","senecaurl": "'"$SENECAURL"'","privatekey": "'"$PRIVATEKEY"'","awsaccesskey":"'"$AWSACCESSKEY"'","awsprivatekey":"'"$AWSPRIVATEKEY"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 3003,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
+-d '{"inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_email_services_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$BACKEND_HOST"'"},"ports": ["3003:3003/tcp"],"environment": {"rdb": "'"$RDB"'","rhost": "'"$RDB_HOST"'","rport": "'"$RDB_PORT"'","senecaurl": "'"$SENECAURL"'","privatekey": "'"$PRIVATEKEY"'","awsaccesskey":"'"$AWSACCESSKEY"'","awsprivatekey":"'"$AWSPRIVATEKEY"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 3003,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
 $RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID_MICRO?action=upgrade
 
 curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
@@ -120,7 +148,7 @@ curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
 -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_backend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "machine=cluster-flowz"},"ports": ["3036:3036/tcp","4036:4036/tcp"],"environment": {"rdb": "'"$RDB"'","rhost": "'"$RDB_HOST"'","rport": "'"$RDB_PORT"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 3036,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
+  "inServiceStrategy":{"launchConfig": {"imageUuid":"docker:'$USERNAME'/mail_backend_flowz:'$TAG'","kind": "container","labels":{"io.rancher.container.pull_image": "always","io.rancher.scheduler.affinity:host_label": "'"$BACKEND_HOST"'"},"ports": ["3036:3036/tcp","4036:4036/tcp"],"environment": {"rdb": "'"$RDB"'","rhost": "'"$RDB_HOST"'","rport": "'"$RDB_PORT"'"},"healthCheck": {"type": "instanceHealthCheck","healthyThreshold": 2,"initializingTimeout": 60000,"interval": 2000,"name": null,"port": 3036,"recreateOnQuorumStrategyConfig": {"type": "recreateOnQuorumStrategyConfig","quorum": 1},"reinitializingTimeout": 60000,"responseTimeout": 60000,"strategy": "recreateOnQuorum","unhealthyThreshold": 3},"networkMode": "managed"}},"toServiceStrategy":null}' \
 $RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID_BACKEND?action=upgrade
 
 curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
