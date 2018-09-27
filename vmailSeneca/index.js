@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer')
 const cors = require('cors')
 var icalToolkit = require('ical-toolkit')
 var builder = icalToolkit.createIcsFileBuilder()
-var seneca = Seneca({timeout:5000})
+var seneca = Seneca({timeout:10000})
 let expObj = Express()
 expObj.use(cors())
 

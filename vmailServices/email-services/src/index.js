@@ -334,8 +334,9 @@ async function sendEmailFun(req){
 
 async function sendemaildataservice(req){
  req = await json(req)
+ console.log('req',req)
  let inReplyTo = ''
- req['replyTo'] = req.from
+//  req['replyTo'] = req.from
  let references = []
  
  if(req.to == "" || req.to == null || req.to == undefined){
@@ -534,10 +535,13 @@ const sendPassword = cors((async(req, res) => {
 
 /*---------------------------------------------- SEND EMAILDATA SERVICE ---------------------------------------*/
 const sendemaildata = cors((async(req, res) => {
+  try{
   let resp = await sendemaildataservice(req);
   return resp;
-// console.log("resp",resp)
-  // send(res, 200, resp)
+  }catch(err) {
+   console.log("err",err)
+   send(res, 401, err)
+  }
 }))
 
 /*---------------------------------------------- NOT FOUND SERVICE ----------------------------------------*/
