@@ -45,18 +45,18 @@
   import microservices from '@/api/microservices'
   import { mapGetters } from 'vuex'
   import $ from 'jquery'
-  import feathers from 'feathers/client';
-  import socketio from 'feathers-socketio/client';
-  import io from 'socket.io-client';
+  // import feathers from 'feathers/client';
+  // import socketio from 'feathers-socketio/client';
+  // import io from 'socket.io-client';
 
-  let baseUrl = process.env.socketUrl;
+  // let baseUrl = process.env.socketUrl;
 
   // const socket = io(baseUrl, {
   //   path: '/vservice'
   // });
 
-  const socket = io(baseUrl);
-  const app = feathers().configure(socketio(socket))
+  // const socket = io(baseUrl);
+  // const app = feathers().configure(socketio(socket))
   
   export default {
     data: () => ({
@@ -143,21 +143,43 @@
       }
 
       
-      let arr = this.emailList
-      let selEm = this.$store.state.selectedEmail
-      let ind = arr.map(a => a.emailid).indexOf(selEm)
+      // let arr = this.emailList
+      // let selEm = this.$store.state.selectedEmail
+      // let ind = arr.map(a => a.emailid).indexOf(selEm)
 
-      app.service("mailservice").on("created", (message) => {
-        this.$store.state.emailgroup.push(message)
-      })
-      app.service("mailservice").on("updated", (message) => {
-        this.$store.state.emailgroup[ind].totalCount = message.totalCount
-        this.$store.state.emailgroup[ind].unreadCount = message.unreadCount
+      // app.service("mailservice").on("created", (message) => {
+      //   console.log('created.........', message)
+      //   this.$store.state.emailgroup.push(message)
+      // })
+      // app.service("mailservice").on("updated", (message) => {
+      //   console.log('updated.........', message)
+      //   this.$store.state.emailgroup[ind].totalCount = message.totalCount
+      //   this.$store.state.emailgroup[ind].unreadCount = message.unreadCount
 
-        if(message.emailid == selEm){
-          this.subjectList(selEm)
+      //   if(message.emailid == selEm){
+      //     this.subjectList(selEm)
+      //   }
+      // })
+    },
+    feathers: {
+      'mailservice': {
+        created (message) {
+          // console.log('created:: ', message)
+          this.$store.state.emailgroup.push(message)
+        },
+        updated (message) {
+          // console.log('updated:: ', message)
+          let arr = this.emailList
+          let selEm = this.$store.state.selectedEmail
+          let ind = arr.map(a => a.emailid).indexOf(selEm)
+          this.$store.state.emailgroup[ind].totalCount = message.totalCount
+          this.$store.state.emailgroup[ind].unreadCount = message.unreadCount
+
+          if(message.emailid == selEm){
+            this.subjectList(selEm)
+          }
         }
-      })
+      }
     }
   }
 </script>
